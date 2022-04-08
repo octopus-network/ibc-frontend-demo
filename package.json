@@ -1,17 +1,17 @@
 {
-  "name": "substrate-front-end-template",
-  "version": "monthly-2022-01",
+  "name": "ibc-frontend-demo",
+  "version": "0.1.0",
   "private": true,
-  "author": "Parity Technologies <admin@parity.io>",
+  "author": "hi@oct.network",
   "license": "Unlicense",
-  "homepage": "https://substrate-developer-hub.github.io/substrate-front-end-template",
+  "homepage": "https://github.com/octopus-network/ibc-frontend-demo",
   "bugs": {
-    "url": "https://github.com/substrate-developer-hub/substrate-front-end-template/issues"
+    "url": "https://github.com/octopus-network/ibc-frontend-demo/issues"
   },
   "keywords": [
-    "substrate",
-    "substrate-ui",
-    "polkadot-js"
+    "ibc-rs",
+    "ibc-frontend",
+    "pallet-ibc"
   ],
   "scripts": {
     "start": "react-app-rewired start",
