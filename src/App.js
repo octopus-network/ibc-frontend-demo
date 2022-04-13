@@ -1,4 +1,4 @@
-import React, { createRef } from 'react'
+import React from 'react'
 import {
   Container,
   Dimmer,
@@ -9,23 +9,20 @@ import {
 } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
-import { SubstrateContextProvider, useSubstrateState } from './substrate-lib'
+import { SubstrateContextProvider, useSubstrateState, useSubstrate } from './substrate-lib'
 import { DeveloperConsole } from './substrate-lib/components'
 
 import AccountSelector from './AccountSelector'
 import Balances from './Balances'
 import BlockNumber from './BlockNumber'
 import Events from './Events'
-// import Interactor from './Interactor'
 import Metadata from './Metadata'
 import NodeInfo from './NodeInfo'
-// import NodeInfo1 from './NodeInfo1'
-// import TemplateModule from './TemplateModule'
 import Transfer from './Transfer'
-// import Upgrade from './Upgrade'
 
 function Main() {
-  const { apiState, apiError, keyringState } = useSubstrateState()
+  const { api, apiState, apiError, keyringState, socket } = useSubstrateState()
+  const stateRecv = useSubstrate().stateRecv
 
   const loader = text => (
     <Dimmer active>
@@ -47,8 +44,8 @@ function Main() {
     </Grid>
   )
 
-  if (apiState === 'ERROR') return message(apiError)
-  else if (apiState !== 'READY') return loader('Connecting to Substrate')
+  if (apiState === 'ERROR' || stateRecv.apiState === 'ERROR') return message(apiError)
+  else if (apiState !== 'READY' || stateRecv.apiState !== 'READY') return loader('Connecting to Substrate')
 
   if (keyringState !== 'READY') {
     return loader(
@@ -56,42 +53,25 @@ function Main() {
     )
   }
 
-  const contextRef = createRef()
-
   return (
-    <div ref={contextRef}>
-      <Sticky context={contextRef}>
+    <div>
+      <Sticky>
         <AccountSelector />
       </Sticky>
       <Container>
         <Grid stackable columns="equal">
           <Grid.Row stretched>
-            <NodeInfo />
             <Metadata />
             <BlockNumber />
             <BlockNumber finalized />
           </Grid.Row>
           <Grid.Row stretched>
-            {/* <NodeInfo1 /> */}
-            {/* <Metadata />
-            <BlockNumber />
-            <BlockNumber finalized /> */}
-          </Grid.Row>
-          <Grid.Row stretched>
             <Balances />
           </Grid.Row>
-          {/* <Grid.Row>
-            <Transfer />
-            <Upgrade />
-          </Grid.Row>
           <Grid.Row>
-            <Interactor />
-            <Events />
+            <NodeInfo api={api} socket={socket}/>
+            <NodeInfo api={stateRecv.api} socket={stateRecv.socket}/>
           </Grid.Row>
-          <Grid.Row>
-            <TemplateModule />
-          </Grid.Row> */}
-          {/* ibc frontend */}
           <Grid.Row>
             <Transfer />
             <Transfer />

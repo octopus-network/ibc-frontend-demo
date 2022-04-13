@@ -1,3 +1,4 @@
 {
-  "PROVIDER_SOCKET": "wss://dev-node.substrate.dev"
+  "PROVIDER_SOCKET_SEND": "wss://dev-node.substrate.dev",
+  "PROVIDER_SOCKET_RECV": "wss://dev-node.substrate.dev"
 }

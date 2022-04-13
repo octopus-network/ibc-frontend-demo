@@ -2,21 +2,19 @@ import React, { useReducer, useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc'
 import { ApiPromise, WsProvider } from '@polkadot/api'
-import { web3Accounts, web3Enable } from '@polkadot/extension-dapp'
 import { keyring as Keyring } from '@polkadot/ui-keyring'
-import { isTestChain } from '@polkadot/util'
-import { TypeRegistry } from '@polkadot/types/create'
 
 import config from '../config'
 
 const parsedQuery = new URLSearchParams(window.location.search)
-const connectedSocket = parsedQuery.get('rpc') || config.PROVIDER_SOCKET
+const connectedSocketSend = parsedQuery.get('rpc') || config.PROVIDER_SOCKET_SEND
+const connectedSocketRecv = parsedQuery.get('rpc') || config.PROVIDER_SOCKET_RECV
 ///
 // Initial state for `useReducer`
 
 const initialState = {
   // These are the states
-  socket: connectedSocket,
+  socket: connectedSocketSend,
   jsonrpc: { ...jsonrpc, ...config.CUSTOM_RPC_METHODS },
   keyring: null,
   keyringState: null,
@@ -26,7 +24,17 @@ const initialState = {
   currentAccount: null,
 }
 
-const registry = new TypeRegistry()
+const initialStateRecv = {
+  // These are the states
+  socket: connectedSocketRecv,
+  jsonrpc: { ...jsonrpc, ...config.CUSTOM_RPC_METHODS },
+  keyring: null,
+  keyringState: null,
+  api: null,
+  apiError: null,
+  apiState: null,
+  currentAccount: null,
+}
 
 ///
 // Reducer function for `useReducer`
@@ -78,46 +86,13 @@ const connect = (state, dispatch) => {
   _api.on('error', err => dispatch({ type: 'CONNECT_ERROR', payload: err }))
 }
 
-const retrieveChainInfo = async api => {
-  const [systemChain, systemChainType] = await Promise.all([
-    api.rpc.system.chain(),
-    api.rpc.system.chainType
-      ? api.rpc.system.chainType()
-      : Promise.resolve(registry.createType('ChainType', 'Live')),
-  ])
-
-  return {
-    systemChain: (systemChain || '<unknown>').toString(),
-    systemChainType,
-  }
-}
-
-///
 // Loading accounts from dev and polkadot-js extension
-const loadAccounts = (state, dispatch) => {
-  const { api } = state
+const loadAccounts = (dispatch) => {
   dispatch({ type: 'LOAD_KEYRING' })
 
   const asyncLoadAccounts = async () => {
     try {
-      await web3Enable(config.APP_NAME)
-      let allAccounts = await web3Accounts()
-
-      allAccounts = allAccounts.map(({ address, meta }) => ({
-        address,
-        meta: { ...meta, name: `${meta.name} (${meta.source})` },
-      }))
-
-      // Logics to check if the connecting chain is a dev chain, coming from polkadot-js Apps
-      // ref: https://github.com/polkadot-js/apps/blob/15b8004b2791eced0dde425d5dc7231a5f86c682/packages/react-api/src/Api.tsx?_pjax=div%5Bitemtype%3D%22http%3A%2F%2Fschema.org%2FSoftwareSourceCode%22%5D%20%3E%20main#L101-L110
-      const { systemChain, systemChainType } = await retrieveChainInfo(api)
-      const isDevelopment =
-        systemChainType.isDevelopment ||
-        systemChainType.isLocal ||
-        isTestChain(systemChain)
-
-      Keyring.loadAll({ isDevelopment }, allAccounts)
-
+      Keyring.loadAll({ isDevelopment: true })
       dispatch({ type: 'SET_KEYRING', payload: Keyring })
     } catch (e) {
       console.error(e)
@@ -132,12 +107,6 @@ const SubstrateContext = React.createContext()
 let keyringLoadAll = false
 
 const SubstrateContextProvider = props => {
-  const neededPropNames = ['socket']
-  neededPropNames.forEach(key => {
-    initialState[key] =
-      typeof props[key] === 'undefined' ? initialState[key] : props[key]
-  })
-
   const [state, dispatch] = useReducer(reducer, initialState)
   connect(state, dispatch)
 
@@ -145,16 +114,19 @@ const SubstrateContextProvider = props => {
     const { apiState, keyringState } = state
     if (apiState === 'READY' && !keyringState && !keyringLoadAll) {
       keyringLoadAll = true
-      loadAccounts(state, dispatch)
+      loadAccounts(dispatch)
     }
   }, [state, dispatch])
+
+  const [stateRecv, dispatchRecv] = useReducer(reducer, initialStateRecv)
+  connect(stateRecv, dispatchRecv)
 
   function setCurrentAccount(acct) {
     dispatch({ type: 'SET_CURRENT_ACCOUNT', payload: acct })
   }
 
   return (
-    <SubstrateContext.Provider value={{ state, setCurrentAccount }}>
+    <SubstrateContext.Provider value={{ state, stateRecv, setCurrentAccount }}>
       {props.children}
     </SubstrateContext.Provider>
   )
