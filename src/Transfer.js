@@ -1,18 +1,43 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
 import { TxButton } from './substrate-lib/components'
-import { useSubstrateState } from './substrate-lib'
+import {useSubstrate} from './substrate-lib'
 
 export default function Main(props) {
+  const {
+    setCurrentAccount,
+    state: { keyring, currentAccount },
+  } = useSubstrate()
+
+  // Get the list of accounts we possess the private key for
+  const keyringOptions = keyring.getPairs().map(account => ({
+    key: account.address,
+    value: account.address,
+    text: account.meta.name.toUpperCase(),
+    icon: 'user',
+  }))
+
+  const initialAddress =
+      keyringOptions.length > 0 ? keyringOptions[0].value : ''
+
+  // Set the initial address
+  useEffect(() => {
+    // `setCurrentAccount()` is called only when currentAccount is null (uninitialized)
+    !currentAccount &&
+    initialAddress.length > 0 &&
+    setCurrentAccount(keyring.getPair(initialAddress))
+  }, [currentAccount, setCurrentAccount, keyring, initialAddress])
+
   const [status, setStatus] = useState(null)
-  const [formState, setFormState] = useState({ addressTo: '', amount: 0 })
+  const [formState, setFormState] = useState({ addressFrom: '', amount: 0 })
 
-  const onChange = (_, data) =>
+  const onChange = (_, data) => {
+    setCurrentAccount(keyring.getPair(data.value))
     setFormState(prev => ({ ...prev, [data.state]: data.value }))
+  }
 
-  const { addressTo, amount } = formState
+  const { addressFrom, amount } = formState
 
-  const { keyring } = useSubstrateState()
   const accounts = keyring.getPairs()
 
   const availableAccounts = []
@@ -49,7 +74,7 @@ export default function Main(props) {
             selection
             search
             options={availableAccounts}
-            state="addressTo"
+            state="addressFrom"
             onChange={onChange}
           />
         </Form.Field>
@@ -60,8 +85,8 @@ export default function Main(props) {
             label="To"
             type="text"
             placeholder="address"
-            value={addressTo}
-            state="addressTo"
+            value={addressFrom}
+            state="addressFrom"
             onChange={onChange}
           />
         </Form.Field>
@@ -82,7 +107,7 @@ export default function Main(props) {
             attrs={{
               palletRpc: 'balances',
               callable: 'transfer',
-              inputParams: [addressTo, amount],
+              inputParams: [addressFrom, amount],
               paramFields: [true, true],
             }}
           />

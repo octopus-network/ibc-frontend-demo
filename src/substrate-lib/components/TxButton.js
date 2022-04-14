@@ -98,6 +98,7 @@ function TxButton({
 
   const signedTx = async () => {
     const fromAcct = await getFromAcct()
+    console.log("fromAcct", fromAcct)
     const transformed = transformParams(paramFields, inputParams)
     // transformed can be empty parameters
 
