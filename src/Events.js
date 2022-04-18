@@ -12,7 +12,7 @@ const eventName = ev => `${ev.section}:${ev.method}`
 const eventParams = ev => JSON.stringify(ev.data)
 
 function Main(props) {
-  const { api } = useSubstrateState()
+  const api = props.api
   const [eventFeed, setEventFeed] = useState([])
 
   useEffect(() => {

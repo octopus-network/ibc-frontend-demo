@@ -78,8 +78,8 @@ function Main() {
             <ReceiveAcc api={stateRecv.api}/>
           </Grid.Row>
           <Grid.Row>
-            <Events />
-            <Events />
+            <Events api={api}/>
+            <Events api={stateRecv.api}/>
           </Grid.Row>
         </Grid>
       </Container>
