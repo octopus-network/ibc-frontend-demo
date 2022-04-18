@@ -106,9 +106,8 @@ function TxButton({
     console.log("palletRpc][callable", palletRpc, callable)
     console.log("tx[palletRpc][callable]", api)
     const txExecute = transformed
-      ? api.tx.ibc.transfer(...transformed)
+      ? api.tx[palletRpc][callable](...transformed)
       : api.tx[palletRpc][callable]()
-    // const txExecute = api.tx.ibc.transfer(0x1234, 0x1234, 0x1234, 0x0, 0x1234, 0x0, 0x1234)
 
     const unsub = await txExecute
       .signAndSend(...fromAcct, txResHandler)
@@ -128,8 +127,10 @@ function TxButton({
     setUnsub(() => unsub)
   }
 
-  const queryResHandler = result =>
-    result.isNone ? setStatus('None') : setStatus(result.toString())
+  const queryResHandler = result => {
+    console.log('queryResHandler', result)
+    result.isNone ? setStatus('None') : setStatus('No. of channels: ' + result.toString())
+  }
 
   const query = async () => {
     const transformed = transformParams(paramFields, inputParams)
