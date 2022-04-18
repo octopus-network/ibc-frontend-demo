@@ -99,12 +99,16 @@ function TxButton({
   const signedTx = async () => {
     const fromAcct = await getFromAcct()
     console.log("fromAcct", fromAcct)
+    console.log("paramFields, inputParams", paramFields, inputParams)
     const transformed = transformParams(paramFields, inputParams)
     // transformed can be empty parameters
-
+    console.log("transformed", transformed)
+    console.log("palletRpc][callable", palletRpc, callable)
+    console.log("tx[palletRpc][callable]", api)
     const txExecute = transformed
-      ? api.tx[palletRpc][callable](...transformed)
+      ? api.tx.ibc.transfer(...transformed)
       : api.tx[palletRpc][callable]()
+    // const txExecute = api.tx.ibc.transfer(0x1234, 0x1234, 0x1234, 0x0, 0x1234, 0x0, 0x1234)
 
     const unsub = await txExecute
       .signAndSend(...fromAcct, txResHandler)

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
-import { TxButton } from './substrate-lib/components'
 import {useSubstrate} from './substrate-lib'
 
 export default function Main(props) {
@@ -28,7 +27,6 @@ export default function Main(props) {
     setCurrentAccount(keyring.getPair(initialAddress))
   }, [currentAccount, setCurrentAccount, keyring, initialAddress])
 
-  const [status, setStatus] = useState(null)
   const [formState, setFormState] = useState({ addressFrom: '', amount: 0 })
 
   const onChange = (_, data) => {
@@ -36,7 +34,7 @@ export default function Main(props) {
     setFormState(prev => ({ ...prev, [data.state]: data.value }))
   }
 
-  const { addressFrom, amount } = formState
+  const { addressFrom } = formState
 
   const accounts = keyring.getPairs()
 
@@ -82,7 +80,7 @@ export default function Main(props) {
         <Form.Field>
           <Input
             fluid
-            label="To"
+            label="From"
             type="text"
             placeholder="address"
             value={addressFrom}
@@ -90,29 +88,6 @@ export default function Main(props) {
             onChange={onChange}
           />
         </Form.Field>
-        <Form.Field>
-          <Input
-            fluid
-            label="Amount"
-            type="number"
-            state="amount"
-            onChange={onChange}
-          />
-        </Form.Field>
-        <Form.Field style={{ textAlign: 'center' }}>
-          <TxButton
-            label="Submit"
-            type="SIGNED-TX"
-            setStatus={setStatus}
-            attrs={{
-              palletRpc: 'balances',
-              callable: 'transfer',
-              inputParams: [addressFrom, amount],
-              paramFields: [true, true],
-            }}
-          />
-        </Form.Field>
-        <div style={{ overflowWrap: 'break-word' }}>{status}</div>
       </Form>
     </Grid.Column>
   )

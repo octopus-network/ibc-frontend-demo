@@ -19,6 +19,7 @@ import Events from './Events'
 import Metadata from './Metadata'
 import NodeInfo from './NodeInfo'
 import Transfer from './Transfer'
+import ReceiveAcc from './ReceiveAcc'
 
 function Main() {
   const { api, apiState, apiError, keyringState, socket } = useSubstrateState()
@@ -74,7 +75,7 @@ function Main() {
           </Grid.Row>
           <Grid.Row>
             <Transfer />
-            <Transfer />
+            <ReceiveAcc />
           </Grid.Row>
           <Grid.Row>
             <Events />
