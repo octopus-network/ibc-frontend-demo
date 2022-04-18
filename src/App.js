@@ -74,8 +74,8 @@ function Main() {
             <NodeInfo api={stateRecv.api} socket={stateRecv.socket}/>
           </Grid.Row>
           <Grid.Row>
-            <Transfer />
-            <ReceiveAcc />
+            <Transfer api={api}/>
+            <ReceiveAcc api={stateRecv.api}/>
           </Grid.Row>
           <Grid.Row>
             <Events />

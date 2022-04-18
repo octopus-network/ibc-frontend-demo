@@ -3,6 +3,9 @@ import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
 import {useSubstrate} from './substrate-lib'
 
 export default function Main(props) {
+  const [accountBalance, setAccountBalance] = useState(0)
+
+  const api = props.api
   const {
     setCurrentAccount,
     state: { keyring, currentAccount },
@@ -18,6 +21,7 @@ export default function Main(props) {
 
   const initialAddress =
       keyringOptions.length > 0 ? keyringOptions[0].value : ''
+  const acctAddr = acct => (acct ? acct.address : '')
 
   // Set the initial address
   useEffect(() => {
@@ -25,6 +29,15 @@ export default function Main(props) {
     !currentAccount &&
     initialAddress.length > 0 &&
     setCurrentAccount(keyring.getPair(initialAddress))
+
+    currentAccount &&
+    api.query.system
+        .account(acctAddr(currentAccount), balance =>
+            setAccountBalance(balance.data.free.toHuman())
+        )
+        // .then(unsub => (unsubscribe = unsub))
+        .catch(console.error)
+
   }, [currentAccount, setCurrentAccount, keyring, initialAddress])
 
   const [formState, setFormState] = useState({ addressFrom: '', amount: 0 })
@@ -86,6 +99,17 @@ export default function Main(props) {
             value={addressFrom}
             state="addressFrom"
             onChange={onChange}
+          />
+        </Form.Field>
+        <Form.Field>
+          <Input
+              fluid
+              label="Balance"
+              type="text"
+              placeholder="address"
+              value={accountBalance}
+              state="accountBalance"
+              onChange={onChange}
           />
         </Form.Field>
       </Form>

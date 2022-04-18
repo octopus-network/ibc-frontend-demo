@@ -1,14 +1,31 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
 import { TxButton } from './substrate-lib/components'
 import { useSubstrateState } from './substrate-lib'
 
 export default function Main(props) {
+  const [currentAccount, setCurrentAccount] = useState(0)
+  const [accountBalance, setAccountBalance] = useState(0)
+  const api = props.api
+
   const [status, setStatus] = useState(null)
   const [formState, setFormState] = useState({ addressTo: '', amount: 0 })
 
-  const onChange = (_, data) =>
+  const acctAddr = acct => (acct ? acct.address : '')
+  useEffect(() => {
+  currentAccount &&
+  api.query.system
+      .account(acctAddr(currentAccount), balance =>
+          setAccountBalance(balance.data.free.toHuman())
+      )
+      // .then(unsub => (unsubscribe = unsub))
+      .catch(console.error)
+  }, [currentAccount, setCurrentAccount])
+
+  const onChange = (_, data) => {
+      setCurrentAccount(keyring.getPair(data.value))
       setFormState(prev => ({ ...prev, [data.state]: data.value }))
+  }
 
   const { addressTo, amount } = formState
 
@@ -69,7 +86,19 @@ export default function Main(props) {
                 onChange={onChange}
             />
           </Form.Field>
-          <Form.Field>
+            <Form.Field>
+                <Input
+                    fluid
+                    label="Balance"
+                    type="text"
+                    placeholder="address"
+                    value={accountBalance}
+                    state="accountBalance"
+                    onChange={onChange}
+                />
+            </Form.Field>
+
+            <Form.Field>
             <Input
                 fluid
                 label="Amount"
