@@ -6,10 +6,11 @@ import { useSubstrateState } from './substrate-lib'
 export default function Main(props) {
   const [currentAccount, setCurrentAccount] = useState(0)
   const [accountBalance, setAccountBalance] = useState(0)
+  const [amount, setAmount] = useState(0)
   const api = props.api
 
   const [status, setStatus] = useState(null)
-  const [formState, setFormState] = useState({ addressTo: '', amount: 0 })
+  const [formState, setFormState] = useState({ addressTo: '' })
 
   const acctAddr = acct => (acct ? acct.address : '')
   useEffect(() => {
@@ -27,7 +28,11 @@ export default function Main(props) {
       setFormState(prev => ({ ...prev, [data.state]: data.value }))
   }
 
-  const { addressTo, amount } = formState
+  const onChangeAmount = (_, data) => {
+    setAmount(data.value)
+  }
+
+  const { addressTo} = formState
 
   const { keyring } = useSubstrateState()
   const accounts = keyring.getPairs()
@@ -91,10 +96,9 @@ export default function Main(props) {
                     fluid
                     label="Balance"
                     type="text"
-                    placeholder="address"
+                    placeholder="balance"
                     value={accountBalance}
                     state="accountBalance"
-                    onChange={onChange}
                 />
             </Form.Field>
 
@@ -104,7 +108,8 @@ export default function Main(props) {
                 label="Amount"
                 type="number"
                 state="amount"
-                onChange={onChange}
+                value={amount}
+                onChange={onChangeAmount}
             />
           </Form.Field>
           <Form.Field style={{ textAlign: 'center' }}>

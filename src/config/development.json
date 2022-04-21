@@ -1,4 +1,16 @@
 {
   "PROVIDER_SOCKET_SEND": "ws://127.0.0.1:9944",
-  "PROVIDER_SOCKET_RECV": "ws://127.0.0.1:8844"
+  "PROVIDER_SOCKET_RECV": "ws://127.0.0.1:8844",
+  "chains": [
+    {
+      "key": "ibc-0",
+      "text": "ibc-0",
+      "value": "ws://127.0.0.1:9944"
+    },
+    {
+      "key": "ibc-1",
+      "text": "ibc-1",
+      "value": "ws://127.0.0.1:8844"
+    }
+  ]
 }

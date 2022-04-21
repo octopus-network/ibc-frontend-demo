@@ -40,7 +40,7 @@ export default function Main(props) {
 
   }, [currentAccount, setCurrentAccount, keyring, initialAddress])
 
-  const [formState, setFormState] = useState({ addressFrom: '', amount: 0 })
+  const [formState, setFormState] = useState({ addressFrom: ''})
 
   const onChange = (_, data) => {
     setCurrentAccount(keyring.getPair(data.value))
@@ -62,7 +62,7 @@ export default function Main(props) {
 
   return (
     <Grid.Column width={8}>
-      <h1>Transfer</h1>
+      <h1>From</h1>
       <Form>
         <Form.Field>
           <Label basic color="teal">
@@ -106,7 +106,7 @@ export default function Main(props) {
               fluid
               label="Balance"
               type="text"
-              placeholder="address"
+              placeholder="balance"
               value={accountBalance}
               state="accountBalance"
               onChange={onChange}

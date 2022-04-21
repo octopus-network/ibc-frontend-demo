@@ -6,6 +6,7 @@ import {
   Grid,
   Sticky,
   Message,
+  Dropdown
 } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
@@ -20,6 +21,7 @@ import Metadata from './Metadata'
 import NodeInfo from './NodeInfo'
 import Transfer from './Transfer'
 import ReceiveAcc from './ReceiveAcc'
+import config from './config'
 
 function Main() {
   const { api, apiState, apiError, keyringState, socket } = useSubstrateState()
@@ -54,6 +56,10 @@ function Main() {
     )
   }
 
+  const onChange = (data1, data2) => {
+    // console.log('2222222222222222222', data1, data2)
+  }
+
   return (
     <div>
       <Sticky>
@@ -68,6 +74,24 @@ function Main() {
           </Grid.Row>
           <Grid.Row stretched>
             <Balances />
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <Dropdown
+                  placeholder='chain'
+                  selection
+                  options={config.chains}
+                  onChange={onChange}
+              />
+            </Grid.Column>
+            <Grid.Column>
+              <Dropdown
+                  placeholder='chain'
+                  selection
+                  options={config.chains}
+                  onChange={onChange}
+              />
+            </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <NodeInfo api={api} socket={socket}/>
