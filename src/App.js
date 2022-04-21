@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   Container,
   Dimmer,
@@ -24,8 +24,15 @@ import ReceiveAcc from './ReceiveAcc'
 import config from './config'
 
 function Main() {
-  const { api, apiState, apiError, keyringState, socket } = useSubstrateState()
-  const stateRecv = useSubstrate().stateRecv
+  const stateSendInit = useSubstrateState()
+  const stateRecvInit = useSubstrate().stateRecv
+  const [stateSend, setStateSend] = useState(stateSendInit)
+  const [stateRecv, setStateRecv] = useState(stateRecvInit)
+
+  useEffect(() => {console.log('useEffect(() ')
+    setStateSend(stateSendInit)
+    setStateRecv(stateRecvInit)
+  })
 
   const loader = text => (
     <Dimmer active>
@@ -47,17 +54,33 @@ function Main() {
     </Grid>
   )
 
-  if (apiState === 'ERROR' || stateRecv.apiState === 'ERROR') return message(apiError)
-  else if (apiState !== 'READY' || stateRecv.apiState !== 'READY') return loader('Connecting to Substrate')
+  if (stateSend.apiState === 'ERROR' || stateRecv.apiState === 'ERROR') return message(stateSend.apiError)
+  else if (stateSend.apiState !== 'READY' || stateRecv.apiState !== 'READY') return loader('Connecting to Substrate')
 
-  if (keyringState !== 'READY') {
+  if (stateSend.keyringState !== 'READY') {
     return loader(
       "Loading accounts (please review any extension's authorization)"
     )
   }
 
-  const onChange = (data1, data2) => {
-    // console.log('2222222222222222222', data1, data2)
+  const onChange = (_, data2) => {
+    if(data2.placeholder === 'chain-send'){    console.log('1111111111111111', data2.value, stateSend, stateRecv)
+        if (data2.value === stateSendInit.socket) { console.log('33333333333333333', "chain-send", data2.value)
+          setStateSend(stateSendInit)
+          setStateRecv(stateRecvInit)
+        } else { console.log('55555555555555555555', "chain-send", data2.value)
+          setStateSend(stateRecvInit)
+          setStateRecv(stateSendInit)
+        }
+    } else {      console.log('44444444444444444', "chain-receive")
+        if (data2.value === stateRecvInit.socket) {
+          setStateSend(stateRecvInit)
+          setStateRecv(stateSendInit)
+        } else {
+          setStateSend(stateSendInit)
+          setStateRecv(stateRecvInit)
+        }
+    }
   }
 
   return (
@@ -78,7 +101,7 @@ function Main() {
           <Grid.Row>
             <Grid.Column>
               <Dropdown
-                  placeholder='chain'
+                  placeholder='chain-send'
                   selection
                   options={config.chains}
                   onChange={onChange}
@@ -86,7 +109,7 @@ function Main() {
             </Grid.Column>
             <Grid.Column>
               <Dropdown
-                  placeholder='chain'
+                  placeholder='chain-receive'
                   selection
                   options={config.chains}
                   onChange={onChange}
@@ -94,15 +117,15 @@ function Main() {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <NodeInfo api={api} socket={socket}/>
+            <NodeInfo api={stateSend.api} socket={stateSend.socket}/>
             <NodeInfo api={stateRecv.api} socket={stateRecv.socket}/>
           </Grid.Row>
           <Grid.Row>
-            <Transfer api={api}/>
+            <Transfer api={stateSend.api}/>
             <ReceiveAcc api={stateRecv.api}/>
           </Grid.Row>
           <Grid.Row>
-            <Events api={api}/>
+            <Events api={stateSend.api}/>
             <Events api={stateRecv.api}/>
           </Grid.Row>
         </Grid>
