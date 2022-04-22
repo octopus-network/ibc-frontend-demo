@@ -39,7 +39,7 @@ function Main(props) {
   )
 }
 
-export default function NodeInfo(props) { console.log('NodeInfo(props)', props.socket)
+export default function NodeInfo(props) {
   const api = props.api
   return api &&
     api.rpc &&

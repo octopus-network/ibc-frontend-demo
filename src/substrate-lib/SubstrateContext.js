@@ -91,7 +91,7 @@ const loadAccounts = (dispatch) => {
   dispatch({ type: 'LOAD_KEYRING' })
 
   const asyncLoadAccounts = () => {
-    try { console.log('asyncLoadAccounts = ()')
+    try {
       Keyring.loadAll({ isDevelopment: true })
       dispatch({ type: 'SET_KEYRING', payload: Keyring })
     } catch (e) {
@@ -107,7 +107,6 @@ const SubstrateContext = React.createContext()
 let keyringLoadAll = false
 
 const SubstrateContextProvider = props => {
-  console.log('SubstrateContextProvider = props ')
   const [state, dispatch] = useReducer(reducer, initialState)
   connect(state, dispatch)
 
