@@ -10,7 +10,7 @@ import {
 } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
-import { SubstrateContextProvider, useSubstrateState, useSubstrate } from './substrate-lib'
+import { SubstrateContextProvider, useSubstrate } from './substrate-lib'
 import { DeveloperConsole } from './substrate-lib/components'
 
 import AccountSelector from './AccountSelector'
@@ -24,14 +24,15 @@ import ReceiveAcc from './ReceiveAcc'
 import config from './config'
 
 function Main() {
-  const stateSendInit = useSubstrateState()
-  const stateRecvInit = useSubstrate().stateRecv
+  const state = useSubstrate()
+  const stateSendInit = state.state
+  const stateRecvInit = state.stateRecv
   const [stateSend, setStateSend] = useState(stateSendInit)
   const [stateRecv, setStateRecv] = useState(stateRecvInit)
 
   useEffect(() => {console.log('useEffect(() ')
-    setStateSend(stateSendInit)
-    setStateRecv(stateRecvInit)
+      setStateSend(stateSendInit)
+      setStateRecv(stateRecvInit)
   })
 
   const loader = text => (
@@ -54,14 +55,20 @@ function Main() {
     </Grid>
   )
 
-  if (stateSend.apiState === 'ERROR' || stateRecv.apiState === 'ERROR') return message(stateSend.apiError)
-  else if (stateSend.apiState !== 'READY' || stateRecv.apiState !== 'READY') return loader('Connecting to Substrate')
+  if (stateSendInit.apiState === 'ERROR' || stateRecvInit.apiState === 'ERROR') return message(stateSendInit.apiError)
+  else if (stateSendInit.apiState !== 'READY' || stateRecvInit.apiState !== 'READY') return loader('Connecting to Substrate')
 
-  if (stateSend.keyringState !== 'READY') {
+  if (stateSendInit.keyringState !== 'READY') {
     return loader(
       "Loading accounts (please review any extension's authorization)"
     )
   }
+
+/*  if (stateSend.keyringState !== 'READY') { console.log('66666666666666', stateRecv, stateSend)
+    return loader(
+        "stateRecv.keyringState !== READY"
+    )
+  }*/
 
   const onChange = (_, data2) => {
     if(data2.placeholder === 'chain-send'){    console.log('1111111111111111', data2.value, stateSend, stateRecv)

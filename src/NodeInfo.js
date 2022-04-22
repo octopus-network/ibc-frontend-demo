@@ -19,7 +19,7 @@ function Main(props) {
       }
     }
     getInfo()
-  }, [api.rpc.system])
+  }, [api.rpc.system, props.api, props.socket])
 
   return (
     <Grid.Column>
@@ -39,9 +39,10 @@ function Main(props) {
   )
 }
 
-export default function NodeInfo(props) {
-  const { api } = props
-  return api.rpc &&
+export default function NodeInfo(props) { console.log('NodeInfo(props)', props.socket)
+  const api = props.api
+  return api &&
+    api.rpc &&
     api.rpc.system &&
     api.rpc.system.chain &&
     api.rpc.system.name &&

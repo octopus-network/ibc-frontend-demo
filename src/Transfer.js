@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
 import {useSubstrate} from './substrate-lib'
 
-export default function Main(props) {
+function Main(props) {
+  const api = props.api
   const [accountBalance, setAccountBalance] = useState(0)
 
-  const api = props.api
   const {
     setCurrentAccount,
     state: { keyring, currentAccount },
@@ -115,4 +115,11 @@ export default function Main(props) {
       </Form>
     </Grid.Column>
   )
+}
+
+export default function Transfer(props) {
+  const api = props.api
+  return api && api.query && api.query.system && api.query.system.events ? (
+      <Main {...props} />
+  ) : null
 }
