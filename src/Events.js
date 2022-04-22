@@ -35,7 +35,7 @@ function Main(props) {
 
           setEventFeed(e => [
             {
-              key: keyNum,
+              key: keyNum + Math.floor(Math.random() * 999999),
               icon: 'bell',
               summary: evName,
               content: evParams,
