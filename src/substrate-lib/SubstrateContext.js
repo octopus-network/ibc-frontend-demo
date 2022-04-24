@@ -87,13 +87,14 @@ const connect = (state, dispatch) => {
 }
 
 // Loading accounts from dev and polkadot-js extension
-const loadAccounts = (dispatch) => {
+const loadAccounts = (dispatch, dispatchRecv) => {
   dispatch({ type: 'LOAD_KEYRING' })
 
   const asyncLoadAccounts = () => {
     try {
       Keyring.loadAll({ isDevelopment: true })
       dispatch({ type: 'SET_KEYRING', payload: Keyring })
+      dispatchRecv({ type: 'SET_KEYRING', payload: Keyring })
     } catch (e) {
       console.error(e)
       dispatch({ type: 'KEYRING_ERROR' })
@@ -110,24 +111,27 @@ const SubstrateContextProvider = props => {
   const [state, dispatch] = useReducer(reducer, initialState)
   connect(state, dispatch)
 
+  const [stateRecv, dispatchRecv] = useReducer(reducer, initialStateRecv)
+  connect(stateRecv, dispatchRecv)
+
   useEffect(() => {
     const { apiState, keyringState } = state
     if (apiState === 'READY' && !keyringState && !keyringLoadAll) {
       keyringLoadAll = true
-      loadAccounts(dispatch)
+      loadAccounts(dispatch, dispatchRecv)
     }
-  }, [state, dispatch])
-  // })
-
-  const [stateRecv, dispatchRecv] = useReducer(reducer, initialStateRecv)
-  connect(stateRecv, dispatchRecv)
+  }, [state, dispatch, stateRecv, dispatchRecv])
 
   function setCurrentAccount(acct) {
     dispatch({ type: 'SET_CURRENT_ACCOUNT', payload: acct })
   }
 
+  function setCurrentAccountRecv(acct) {
+    dispatchRecv({ type: 'SET_CURRENT_ACCOUNT', payload: acct })
+  }
+
   return (
-    <SubstrateContext.Provider value={{ state, stateRecv, setCurrentAccount }}>
+    <SubstrateContext.Provider value={{ state, stateRecv, setCurrentAccount, setCurrentAccountRecv }}>
       {props.children}
     </SubstrateContext.Provider>
   )

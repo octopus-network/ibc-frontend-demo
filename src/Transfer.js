@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
-import {useSubstrate} from './substrate-lib'
 
 function Main(props) {
-  const api = props.api
   const [accountBalance, setAccountBalance] = useState(0)
 
   const {
     setCurrentAccount,
-    state: { keyring, currentAccount },
-  } = useSubstrate()
+    state: { keyring, currentAccount, api, socket },
+  } = props.state
 
   // Get the list of accounts we possess the private key for
   const keyringOptions = keyring.getPairs().map(account => ({
@@ -22,7 +20,7 @@ function Main(props) {
   const initialAddress =
       keyringOptions.length > 0 ? keyringOptions[0].value : ''
   const acctAddr = acct => (acct ? acct.address : '')
-
+  console.log('33333333333333333', initialAddress)
   // Set the initial address
   useEffect(() => {
     // `setCurrentAccount()` is called only when currentAccount is null (uninitialized)
@@ -41,13 +39,19 @@ function Main(props) {
   }, [currentAccount, setCurrentAccount, keyring, initialAddress])
 
   const [formState, setFormState] = useState({ addressFrom: ''})
+  const { addressFrom } = formState
+
+  const [accSelected, setAccSelected] = useState(initialAddress)
+  useEffect(() => {
+    setCurrentAccount(keyring.getPair(accSelected))
+  }, [socket])
 
   const onChange = (_, data) => {
     setCurrentAccount(keyring.getPair(data.value))
     setFormState(prev => ({ ...prev, [data.state]: data.value }))
+    setAccSelected(data.value)
   }
 
-  const { addressFrom } = formState
 
   const accounts = keyring.getPairs()
 
@@ -87,6 +91,7 @@ function Main(props) {
             options={availableAccounts}
             state="addressFrom"
             onChange={onChange}
+            value={accSelected}
           />
         </Form.Field>
 
@@ -98,7 +103,6 @@ function Main(props) {
             placeholder="address"
             value={addressFrom}
             state="addressFrom"
-            onChange={onChange}
           />
         </Form.Field>
         <Form.Field>
@@ -109,7 +113,6 @@ function Main(props) {
               placeholder="balance"
               value={accountBalance}
               state="accountBalance"
-              onChange={onChange}
           />
         </Form.Field>
       </Form>
@@ -117,8 +120,9 @@ function Main(props) {
   )
 }
 
-export default function Transfer(props) {
-  const api = props.api
+export default function Transfer(props) { console.log('default function Transfer(props)')
+  const api = props.state.state.api
+  console.log('2222222222222', props.state.state)
   return api && api.query && api.query.system && api.query.system.events ? (
       <Main {...props} />
   ) : null

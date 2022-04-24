@@ -28,8 +28,8 @@ const RECEIVER = 'receiver'
 
 function Main() {
   const state = useSubstrate()
-  const stateSendInit = state.state
-  const stateRecvInit = state.stateRecv
+  const stateSendInit = {state: state.state, setCurrentAccount: state.setCurrentAccount}
+  const stateRecvInit = {state: state.stateRecv, setCurrentAccount: state.setCurrentAccountRecv}
 
   const [fromTo, setFromTo] = useState(true) // if the sender is stateSendInit, fromTo is true; visa versa
 
@@ -67,10 +67,10 @@ function Main() {
       return _fromTo ? config.chains[1].value : config.chains[0].value
   }
 
-  if (stateSendInit.apiState === 'ERROR' || stateRecvInit.apiState === 'ERROR') return message(stateSendInit.apiError)
-  else if (stateSendInit.apiState !== 'READY' || stateRecvInit.apiState !== 'READY') return loader('Connecting to Substrate')
+  if (stateSendInit.state.apiState === 'ERROR' || stateRecvInit.state.apiState === 'ERROR') return message(stateSendInit.apiError)
+  else if (stateSendInit.state.apiState !== 'READY' || stateRecvInit.state.apiState !== 'READY') return loader('Connecting to Substrate')
 
-  if (stateSendInit.keyringState !== 'READY') {
+  if (stateSendInit.state.keyringState !== 'READY') {
     return loader(
       "Loading accounts (please review any extension's authorization)"
     )
@@ -78,9 +78,9 @@ function Main() {
 
   const onChange = (_, data2) => {
     if(data2.placeholder === 'chain-send')
-      (data2.value === stateSendInit.socket) ? setFromTo(true) : setFromTo(false)
+      (data2.value === stateSendInit.state.socket) ? setFromTo(true) : setFromTo(false)
     else
-      (data2.value === stateSendInit.socket) ? setFromTo(false) : setFromTo(true)
+      (data2.value === stateSendInit.state.socket) ? setFromTo(false) : setFromTo(true)
   }
 
   return (
@@ -119,16 +119,16 @@ function Main() {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <NodeInfo api={ judgeFromTo(SENDER, fromTo).api } socket={ judgeFromTo(SENDER, fromTo).socket }/>
-            <NodeInfo api={ judgeFromTo(RECEIVER, fromTo).api } socket={ judgeFromTo(RECEIVER, fromTo).socket }/>
+            <NodeInfo api={ judgeFromTo(SENDER, fromTo).state.api } socket={ judgeFromTo(SENDER, fromTo).state.socket }/>
+            <NodeInfo api={ judgeFromTo(RECEIVER, fromTo).state.api } socket={ judgeFromTo(RECEIVER, fromTo).state.socket }/>
           </Grid.Row>
           <Grid.Row>
-            <Transfer api={ judgeFromTo(SENDER, fromTo).api }/>
-            <ReceiveAcc api={ judgeFromTo(RECEIVER, fromTo).api }/>
+            <Transfer state={ judgeFromTo(SENDER, fromTo) }/>
+            <ReceiveAcc api={ judgeFromTo(RECEIVER, fromTo).state.api }/>
           </Grid.Row>
           <Grid.Row>
-            <Events api={ judgeFromTo(SENDER, fromTo).api }/>
-            <Events api={ judgeFromTo(RECEIVER, fromTo).api }/>
+            <Events api={ judgeFromTo(SENDER, fromTo).state.api }/>
+            <Events api={ judgeFromTo(RECEIVER, fromTo).state.api }/>
           </Grid.Row>
         </Grid>
       </Container>

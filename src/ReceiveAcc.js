@@ -3,7 +3,7 @@ import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
 import { TxButton } from './substrate-lib/components'
 import { useSubstrateState } from './substrate-lib'
 
-export default function Main(props) {
+export default function Main(props) { console.log('default function ReceiveAcc(props)')
   const [currentAccount, setCurrentAccount] = useState(0)
   const [accountBalance, setAccountBalance] = useState(0)
   const [amount, setAmount] = useState(0)
@@ -52,7 +52,7 @@ export default function Main(props) {
 
   return (
       <Grid.Column width={8}>
-        <h1>Transfer</h1>
+        <h1>Receiver</h1>
         <Form>
           <Form.Field>
             <Label basic color="teal">
