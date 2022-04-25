@@ -9,6 +9,8 @@ function Main(props) {
     state: { keyring, currentAccount, api, socket },
   } = props.state
 
+  const setSenderAccount = props.setSenderAccount
+
   // Get the list of accounts we possess the private key for
   const keyringOptions = keyring.getPairs().map(account => ({
     key: account.address,
@@ -20,13 +22,17 @@ function Main(props) {
   const initialAddress =
       keyringOptions.length > 0 ? keyringOptions[0].value : ''
   const acctAddr = acct => (acct ? acct.address : '')
-  console.log('33333333333333333', initialAddress)
+
   // Set the initial address
   useEffect(() => {
     // `setCurrentAccount()` is called only when currentAccount is null (uninitialized)
     !currentAccount &&
     initialAddress.length > 0 &&
     setCurrentAccount(keyring.getPair(initialAddress))
+
+    !currentAccount &&
+    initialAddress.length > 0 &&
+    setSenderAccount(keyring.getPair(initialAddress))
 
     currentAccount &&
     api.query.system
@@ -44,10 +50,12 @@ function Main(props) {
   const [accSelected, setAccSelected] = useState(initialAddress)
   useEffect(() => {
     setCurrentAccount(keyring.getPair(accSelected))
+    setSenderAccount(keyring.getPair(accSelected))
   }, [socket])
 
   const onChange = (_, data) => {
     setCurrentAccount(keyring.getPair(data.value))
+    setSenderAccount(keyring.getPair(data.value))
     setFormState(prev => ({ ...prev, [data.state]: data.value }))
     setAccSelected(data.value)
   }

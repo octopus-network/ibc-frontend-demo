@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
-import { TxButton } from './substrate-lib/components'
+import { TxButtonIbc, TxButton } from './substrate-lib/components'
 import { useSubstrateState } from './substrate-lib'
 
 export default function Main(props) { console.log('default function ReceiveAcc(props)')
   const [currentAccount, setCurrentAccount] = useState(0)
   const [accountBalance, setAccountBalance] = useState(0)
   const [amount, setAmount] = useState(0)
-  const api = props.api
+  const api = props.state.state.api
 
   const [status, setStatus] = useState(null)
   const [formState, setFormState] = useState({ addressTo: '' })
@@ -126,7 +126,7 @@ export default function Main(props) { console.log('default function ReceiveAcc(p
             />
           </Form.Field>
           <Form.Field style={{ textAlign: 'center' }}>
-            <TxButton
+            <TxButtonIbc
                 label="Submit"
                 type="SIGNED-TX"
                 setStatus={setStatus}
@@ -135,6 +135,8 @@ export default function Main(props) { console.log('default function ReceiveAcc(p
                   callable: 'transfer',
                   inputParams: [toHexStr('transfer'), toHexStr('channel-0'), tokenSymbol, parseInt(amount), toHexStr(addressTo), 999999, Date.now() + 999999],
                   paramFields: [true, true, true, true, true, true, true],
+                  state: props.state,
+                  senderApi: props.senderApi,
                 }}
             />
           </Form.Field>

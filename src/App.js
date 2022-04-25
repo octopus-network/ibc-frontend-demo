@@ -123,8 +123,8 @@ function Main() {
             <NodeInfo api={ judgeFromTo(RECEIVER, fromTo).state.api } socket={ judgeFromTo(RECEIVER, fromTo).state.socket }/>
           </Grid.Row>
           <Grid.Row>
-            <Transfer state={ judgeFromTo(SENDER, fromTo) }/>
-            <ReceiveAcc api={ judgeFromTo(RECEIVER, fromTo).state.api }/>
+            <Transfer state={ judgeFromTo(SENDER, fromTo) } setSenderAccount={ judgeFromTo(RECEIVER, fromTo).setCurrentAccount }/>
+            <ReceiveAcc state={ judgeFromTo(RECEIVER, fromTo) } senderApi={judgeFromTo(SENDER, fromTo).state.api}/>
           </Grid.Row>
           <Grid.Row>
             <Events api={ judgeFromTo(SENDER, fromTo).state.api }/>
