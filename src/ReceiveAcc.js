@@ -83,7 +83,7 @@ export default function Main(props) { console.log('default function ReceiveAcc(p
           <Form.Field>
             <Input
                 fluid
-                label="To"
+                label="Address"
                 type="text"
                 placeholder="address"
                 value={addressTo}

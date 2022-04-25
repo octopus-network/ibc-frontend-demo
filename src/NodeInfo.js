@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Icon, Grid } from 'semantic-ui-react'
+import { Card, Icon, Grid, Statistic } from 'semantic-ui-react'
 
 function Main(props) {
   const { api, socket }  = props
@@ -21,11 +21,30 @@ function Main(props) {
     getInfo()
   }, [api.rpc.system, props.api, props.socket])
 
+  const [blockNumber, setBlockNumber] = useState(0)
+  const bestNumber = api.derive.chain.bestNumber
+  const [blockNumberTimer, setBlockNumberTimer] = useState(0)
+
+  useEffect(() => {
+    bestNumber(number => {
+      setBlockNumber(number.toNumber().toLocaleString('en-US'))
+    })
+        .catch(console.error)
+  }, [bestNumber])
+
+  const timer = () => {
+    setBlockNumberTimer(time => time + 1)
+  }
+
+  useEffect(() => {
+    const id = setInterval(timer, 1000)
+    return () => clearInterval(id)
+  }, [])
+
   return (
     <Grid.Column>
       <Card>
         <Card.Content>
-          <Card.Header>{nodeInfo.nodeName}</Card.Header>
           <Card.Meta>
             <span>{nodeInfo.chain}</span>
           </Card.Meta>
@@ -33,6 +52,16 @@ function Main(props) {
         </Card.Content>
         <Card.Content extra>
           <Icon name="setting" />v{nodeInfo.nodeVersion}
+        </Card.Content>
+        <Card.Content textAlign="center">
+          <Statistic
+              className="block_number"
+              label={'Current' + ' Block'}
+              value={blockNumber}
+          />
+        </Card.Content>
+        <Card.Content extra>
+          <Icon name="time" /> {blockNumberTimer}
         </Card.Content>
       </Card>
     </Grid.Column>

@@ -106,7 +106,7 @@ function Main(props) {
         <Form.Field>
           <Input
             fluid
-            label="From"
+            label="Address"
             type="text"
             placeholder="address"
             value={addressFrom}
