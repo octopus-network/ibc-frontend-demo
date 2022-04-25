@@ -13,11 +13,7 @@ import 'semantic-ui-css/semantic.min.css'
 import { SubstrateContextProvider, useSubstrate } from './substrate-lib'
 import { DeveloperConsole } from './substrate-lib/components'
 
-import AccountSelector from './AccountSelector'
-import Balances from './Balances'
-import BlockNumber from './BlockNumber'
 import Events from './Events'
-import Metadata from './Metadata'
 import NodeInfo from './NodeInfo'
 import Transfer from './Transfer'
 import ReceiveAcc from './ReceiveAcc'
@@ -90,19 +86,17 @@ function Main() {
 
   return (
     <div>
-      <Sticky>
-        <AccountSelector />
+      <Sticky
+        style={{
+          backgroundColor: '#fff',
+          borderColor: '#fff',
+          paddingTop: '1em',
+          paddingBottom: '1em',
+        }}
+      >
       </Sticky>
       <Container>
         <Grid stackable columns="equal">
-          <Grid.Row stretched>
-            <Metadata />
-            <BlockNumber />
-            <BlockNumber finalized />
-          </Grid.Row>
-          <Grid.Row stretched>
-            <Balances />
-          </Grid.Row>
           <Grid.Row>
             <Grid.Column>
               <Dropdown
