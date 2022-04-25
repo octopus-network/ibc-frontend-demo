@@ -72,6 +72,12 @@ function Main(props) {
     })
   })
 
+  const [amount, setAmount] = useState(0)
+  const onChangeAmount = (_, data) => {
+    setAmount(data.value)
+    props.onTransAmountChange(data.value)
+  }
+
   return (
     <Grid.Column width={8}>
       <h1>From</h1>
@@ -123,6 +129,18 @@ function Main(props) {
               state="accountBalance"
           />
         </Form.Field>
+
+        <Form.Field>
+          <Input
+              fluid
+              label="Amount"
+              type="number"
+              state="amount"
+              value={amount}
+              onChange={onChangeAmount}
+          />
+        </Form.Field>
+
       </Form>
     </Grid.Column>
   )

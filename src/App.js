@@ -32,6 +32,7 @@ function Main() {
   const stateRecvInit = {state: state.stateRecv, setCurrentAccount: state.setCurrentAccountRecv}
 
   const [fromTo, setFromTo] = useState(true) // if the sender is stateSendInit, fromTo is true; visa versa
+  const [transAmount, setTransAmount] = useState(0)
 
   const loader = text => (
     <Dimmer active>
@@ -83,6 +84,10 @@ function Main() {
       (data2.value === stateSendInit.state.socket) ? setFromTo(false) : setFromTo(true)
   }
 
+  const onTransAmountChange = (_transAmount) => {
+    setTransAmount(_transAmount)
+  }
+
   return (
     <div>
       <Sticky>
@@ -123,8 +128,16 @@ function Main() {
             <NodeInfo api={ judgeFromTo(RECEIVER, fromTo).state.api } socket={ judgeFromTo(RECEIVER, fromTo).state.socket }/>
           </Grid.Row>
           <Grid.Row>
-            <Transfer state={ judgeFromTo(SENDER, fromTo) } setSenderAccount={ judgeFromTo(RECEIVER, fromTo).setCurrentAccount }/>
-            <ReceiveAcc state={ judgeFromTo(RECEIVER, fromTo) } senderApi={judgeFromTo(SENDER, fromTo).state.api}/>
+            <Transfer
+                state={ judgeFromTo(SENDER, fromTo) }
+                setSenderAccount={ judgeFromTo(RECEIVER, fromTo).setCurrentAccount }
+                onTransAmountChange={ onTransAmountChange }
+             />
+            <ReceiveAcc
+                state={ judgeFromTo(RECEIVER, fromTo) }
+                senderApi={judgeFromTo(SENDER, fromTo).state.api}
+                transAmount={transAmount}
+            />
           </Grid.Row>
           <Grid.Row>
             <Events api={ judgeFromTo(SENDER, fromTo).state.api }/>

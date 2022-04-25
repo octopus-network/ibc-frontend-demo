@@ -6,7 +6,6 @@ import { useSubstrateState } from './substrate-lib'
 export default function Main(props) { console.log('default function ReceiveAcc(props)')
   const [currentAccount, setCurrentAccount] = useState(0)
   const [accountBalance, setAccountBalance] = useState(0)
-  const [amount, setAmount] = useState(0)
   const api = props.state.state.api
 
   const [status, setStatus] = useState(null)
@@ -26,10 +25,6 @@ export default function Main(props) { console.log('default function ReceiveAcc(p
   const onChange = (_, data) => {
       setCurrentAccount(keyring.getPair(data.value))
       setFormState(prev => ({ ...prev, [data.state]: data.value }))
-  }
-
-  const onChangeAmount = (_, data) => {
-    setAmount(data.value)
   }
 
   const { addressTo} = formState
@@ -102,16 +97,6 @@ export default function Main(props) { console.log('default function ReceiveAcc(p
                 />
             </Form.Field>
 
-            <Form.Field>
-            <Input
-                fluid
-                label="Amount"
-                type="number"
-                state="amount"
-                value={amount}
-                onChange={onChangeAmount}
-            />
-          </Form.Field>
           <Form.Field style={{ textAlign: 'center' }}>
             <TxButton
                 label="Query Channel"
@@ -133,7 +118,7 @@ export default function Main(props) { console.log('default function ReceiveAcc(p
                 attrs={{
                   palletRpc: 'ibc',
                   callable: 'transfer',
-                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), tokenSymbol, parseInt(amount), toHexStr(addressTo), 999999, Date.now() + 999999],
+                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), tokenSymbol, parseInt(props.transAmount), toHexStr(addressTo), 999999, Date.now() + 999999],
                   paramFields: [true, true, true, true, true, true, true],
                   state: props.state,
                   senderApi: props.senderApi,
