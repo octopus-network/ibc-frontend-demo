@@ -148,7 +148,6 @@ function Main(props) {
 
 export default function Transfer(props) { console.log('default function Transfer(props)')
   const api = props.state.state.api
-  console.log('2222222222222', props.state.state)
   return api && api.query && api.query.system && api.query.system.events ? (
       <Main {...props} />
   ) : null

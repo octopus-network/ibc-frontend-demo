@@ -16,7 +16,6 @@ function TxButtonIbc({
   type = 'QUERY',
   txOnClickHandler = null,
 }) {
-  console.log('88888888888888888', attrs)
   // Hooks
   const {
     state: { currentAccount},

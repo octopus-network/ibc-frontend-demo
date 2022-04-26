@@ -43,8 +43,6 @@ export default function Main(props) { console.log('default function ReceiveAcc(p
 
   const toHexStr = (myString) => '0x' + new Buffer(myString).toString('hex')
 
-  let tokenSymbol = 0x1234; // Todo: fake symbol for testing
-
   return (
       <Grid.Column width={8}>
         <h1>Receiver</h1>
@@ -118,7 +116,7 @@ export default function Main(props) { console.log('default function ReceiveAcc(p
                 attrs={{
                   palletRpc: 'ibc',
                   callable: 'transfer',
-                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), tokenSymbol, parseInt(props.transAmount), toHexStr(addressTo), 999999, Date.now() + 999999],
+                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr('atom'), parseInt(props.transAmount), toHexStr(addressTo), 999999, Date.now() + 999999],
                   paramFields: [true, true, true, true, true, true, true],
                   state: props.state,
                   senderApi: props.senderApi,
