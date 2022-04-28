@@ -146,7 +146,7 @@ function Main(props) {
   )
 }
 
-export default function Transfer(props) { console.log('default function Transfer(props)')
+export default function Transfer(props) {
   const api = props.state.state.api
   return api && api.query && api.query.system && api.query.system.events ? (
       <Main {...props} />

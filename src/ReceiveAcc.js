@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
 import { TxButtonIbc, TxButton } from './substrate-lib/components'
 import { useSubstrateState } from './substrate-lib'
+import { keyring as Keyring } from '@polkadot/ui-keyring'
+import { u8aToHex } from '@polkadot/util';
 
-export default function Main(props) { console.log('default function ReceiveAcc(props)')
+export default function Main(props) {
   const [currentAccount, setCurrentAccount] = useState(0)
   const [accountBalance, setAccountBalance] = useState(0)
   const api = props.state.state.api
@@ -27,7 +29,7 @@ export default function Main(props) { console.log('default function ReceiveAcc(p
       setFormState(prev => ({ ...prev, [data.state]: data.value }))
   }
 
-  const { addressTo} = formState
+  const { addressTo } = formState
 
   const { keyring } = useSubstrateState()
   const accounts = keyring.getPairs()
@@ -40,6 +42,15 @@ export default function Main(props) { console.log('default function ReceiveAcc(p
       value: account.address,
     })
   })
+
+  const ss58ToHex = (ss58) => {
+      if (ss58) {
+          const publicKey = Keyring.decodeAddress(ss58)
+          const hexPublicKey = u8aToHex(publicKey)
+          return hexPublicKey.substring(2)
+      }
+      return ''
+  }
 
   const toHexStr = (myString) => '0x' + new Buffer(myString).toString('hex')
 
@@ -116,7 +127,9 @@ export default function Main(props) { console.log('default function ReceiveAcc(p
                 attrs={{
                   palletRpc: 'ibc',
                   callable: 'transfer',
-                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr('atom'), parseInt(props.transAmount), toHexStr(addressTo), 999999, Date.now() + 999999],
+                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr('atom'), parseInt(props.transAmount),
+                      toHexStr(ss58ToHex(addressTo)),
+                      999999, Date.now() + 999999],
                   paramFields: [true, true, true, true, true, true, true],
                   state: props.state,
                   senderApi: props.senderApi,
