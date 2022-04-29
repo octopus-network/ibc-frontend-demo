@@ -98,6 +98,7 @@ const loadAccounts = (dispatch, dispatchRecv) => {
     } catch (e) {
       console.error(e)
       dispatch({ type: 'KEYRING_ERROR' })
+      dispatchRecv({ type: 'KEYRING_ERROR' })
     }
   }
   asyncLoadAccounts()
@@ -116,7 +117,9 @@ const SubstrateContextProvider = props => {
 
   useEffect(() => {
     const { apiState, keyringState } = state
-    if (apiState === 'READY' && !keyringState && !keyringLoadAll) {
+    const apiStateRecv = stateRecv.apiState
+    const keyringStateRecv = stateRecv.keyringState
+    if (apiState === 'READY' && apiStateRecv === 'READY' && !keyringState && !keyringStateRecv && !keyringLoadAll) {
       keyringLoadAll = true
       loadAccounts(dispatch, dispatchRecv)
     }

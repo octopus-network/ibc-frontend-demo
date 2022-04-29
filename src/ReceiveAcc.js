@@ -127,7 +127,7 @@ export default function Main(props) {
                 attrs={{
                   palletRpc: 'ibc',
                   callable: 'transfer',
-                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr('atom'), parseInt(props.transAmount),
+                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr('atom'), props.transAmount,
                       toHexStr(ss58ToHex(addressTo)),
                       999999, Date.now() + 999999],
                   paramFields: [true, true, true, true, true, true, true],

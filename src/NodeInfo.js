@@ -26,10 +26,17 @@ function Main(props) {
   const [blockNumberTimer, setBlockNumberTimer] = useState(0)
 
   useEffect(() => {
-    bestNumber(number => {
+    const unsub = bestNumber(number => {
       setBlockNumber(number.toNumber().toLocaleString('en-US'))
-    })
-        .catch(console.error)
+    }).catch(console.error)
+
+    return function cleanup() {
+      unsub.then( result => {
+        result();
+      }, function(error) {
+        console.error(error);
+      })
+    }
   }, [bestNumber])
 
   const timer = () => {

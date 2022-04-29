@@ -80,7 +80,7 @@ function Main(props) {
 
   return (
     <Grid.Column width={8}>
-      <h1>From</h1>
+      <h1>Sender</h1>
       <Form>
         <Form.Field>
           <Label basic color="teal">
@@ -134,7 +134,7 @@ function Main(props) {
           <Input
               fluid
               label="Amount"
-              type="number"
+              type="text"
               state="amount"
               value={amount}
               onChange={onChangeAmount}
