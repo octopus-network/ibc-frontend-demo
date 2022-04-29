@@ -26,17 +26,14 @@ function Main(props) {
   const [blockNumberTimer, setBlockNumberTimer] = useState(0)
 
   useEffect(() => {
-    const unsub = bestNumber(number => {
+    let unsubscribe
+    bestNumber(number => {
       setBlockNumber(number.toNumber().toLocaleString('en-US'))
-    }).catch(console.error)
+    })
+    .then(unsub => (unsubscribe = unsub))
+    .catch(console.error)
 
-    return function cleanup() {
-      unsub.then( result => {
-        result();
-      }, function(error) {
-        console.error(error);
-      })
-    }
+    return () => unsubscribe && unsubscribe()
   }, [bestNumber])
 
   const timer = () => {

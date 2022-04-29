@@ -15,13 +15,16 @@ export default function Main(props) {
 
   const acctAddr = acct => (acct ? acct.address : '')
   useEffect(() => {
-  currentAccount &&
-  api.query.system
+    let unsubscribe
+    currentAccount &&
+    api.query.system
       .account(acctAddr(currentAccount), balance =>
           setAccountBalance(balance.data.free.toHuman())
       )
-      // .then(unsub => (unsubscribe = unsub))
+      .then(unsub => (unsubscribe = unsub))
       .catch(console.error)
+
+    return () => unsubscribe && unsubscribe()
   }, [currentAccount, setCurrentAccount])
 
   const onChange = (_, data) => {

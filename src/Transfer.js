@@ -34,14 +34,16 @@ function Main(props) {
     initialAddress.length > 0 &&
     setSenderAccount(keyring.getPair(initialAddress))
 
+    let unsubscribe
     currentAccount &&
     api.query.system
         .account(acctAddr(currentAccount), balance =>
             setAccountBalance(balance.data.free.toHuman())
         )
-        // .then(unsub => (unsubscribe = unsub))
+        .then(unsub => (unsubscribe = unsub))
         .catch(console.error)
 
+    return () => unsubscribe && unsubscribe()
   }, [currentAccount, setCurrentAccount, keyring, initialAddress])
 
   const [formState, setFormState] = useState({ addressFrom: ''})
