@@ -19,6 +19,9 @@ import Transfer from './Transfer'
 import ReceiveAcc from './ReceiveAcc'
 import config from './config'
 
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { assertIsBroadcastTxSuccess, SigningStargateClient } from "@cosmjs/stargate";
+
 const SENDER = 'sender'
 const RECEIVER = 'receiver'
 
@@ -73,11 +76,38 @@ function Main() {
     )
   }
 
-  const onChange = (_, data2) => {
+  const onChange = async (_, data2) => {
     if(data2.placeholder === 'chain-send')
       (data2.value === stateSendInit.state.socket) ? setFromTo(true) : setFromTo(false)
     else
       (data2.value === stateSendInit.state.socket) ? setFromTo(false) : setFromTo(true)
+
+    const mnemonic = "picture switch picture soap flip dawn nerve easy rebuild company hawk stand menu rhythm unfold engine rug rally weapon raccoon glide mosquito lion dog";
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
+    const [firstAccount] = await wallet.getAccounts();console.log("firstAccount", firstAccount)
+
+    const rpcEndpoint = "http://127.0.0.1:26657";
+    const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
+
+    const recipient = "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5";
+    const amount = {
+      denom: "atom",
+      amount: "8000",
+    };
+
+    const fee = {
+      amount: [
+        {
+          denom: "atom",
+          amount: "2",
+        },
+      ],
+      gas: "180000", // 180k
+    };
+    // const result = await client.getAllBalances('cosmos1xh2jvz9ecty8qdctlgscmys2dr5gz729k0l7x4', "atom");console.log(result)
+    const result = await client.sendTokens(firstAccount.address, recipient, [amount], fee); console.log("result", result)
+    assertIsBroadcastTxSuccess(result);
+
   }
 
   const onTransAmountChange = (_transAmount) => {
