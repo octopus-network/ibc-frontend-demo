@@ -105,9 +105,12 @@ function Main() {
       gas: "180000", // 180k
     };
     // const result = await client.getAllBalances('cosmos1xh2jvz9ecty8qdctlgscmys2dr5gz729k0l7x4', "atom");console.log(result)
-    const result = await client.sendTokens(firstAccount.address, recipient, [amount], fee); console.log("result", result)
+    // const result = await client.sendTokens(firstAccount.address, recipient, [amount], fee); console.log("result", result)
+    const result = await client.sendIbcTokens(
+        firstAccount.address, recipient, amount,
+        'transfer', 'channel-0',
+        undefined, undefined, fee, ''); console.log("result", result)
     assertIsBroadcastTxSuccess(result);
-
   }
 
   const onTransAmountChange = (_transAmount) => {
