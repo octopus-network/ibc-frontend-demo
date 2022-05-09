@@ -19,8 +19,10 @@ import Transfer from './Transfer'
 import ReceiveAcc from './ReceiveAcc'
 import config from './config'
 
+/*
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { assertIsBroadcastTxSuccess, SigningStargateClient } from "@cosmjs/stargate";
+*/
 
 const SENDER = 'sender'
 const RECEIVER = 'receiver'
@@ -82,7 +84,7 @@ function Main() {
     else
       (data2.value === stateSendInit.state.socket) ? setFromTo(false) : setFromTo(true)
 
-    const mnemonic = "picture switch picture soap flip dawn nerve easy rebuild company hawk stand menu rhythm unfold engine rug rally weapon raccoon glide mosquito lion dog";
+/*    const mnemonic = "picture switch picture soap flip dawn nerve easy rebuild company hawk stand menu rhythm unfold engine rug rally weapon raccoon glide mosquito lion dog";
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
     const [firstAccount] = await wallet.getAccounts();console.log("firstAccount", firstAccount)
 
@@ -110,7 +112,7 @@ function Main() {
         firstAccount.address, recipient, amount,
         'transfer', 'channel-0',
         undefined, undefined, fee, ''); console.log("result", result)
-    assertIsBroadcastTxSuccess(result);
+    assertIsBroadcastTxSuccess(result);*/
   }
 
   const onTransAmountChange = (_transAmount) => {
