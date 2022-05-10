@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Card, Icon, Grid, Statistic } from 'semantic-ui-react'
 
 function Main(props) {
-  const { client }  = props
+  const { client, rpcEndpoint }  = props.state
   const [nodeInfo, setNodeInfo] = useState({})
 
   useEffect(() => {
@@ -23,7 +23,7 @@ function Main(props) {
   }, [client])
 
   const [blockNumber, setBlockNumber] = useState(0)
-  // const [blockNumberTimer, setBlockNumberTimer] = useState(0)
+  const [blockNumberTimer, setBlockNumberTimer] = useState(0)
 
   useEffect(async () => {
     let height = await client.getHeight();
@@ -31,11 +31,13 @@ function Main(props) {
     setBlockNumber(height)
   }, [client])
 
-  const timer = () => {
-    // setBlockNumberTimer(time => time + 1)
+  const timer = async () => {
+    let height = await client.getHeight();
+    setBlockNumber(height)
+    setBlockNumberTimer(time => time + 1)
   }
 
-  useEffect(() => {
+  useEffect(async () => {
     const id = setInterval(timer, 1000)
     return () => clearInterval(id)
   }, [])
@@ -47,7 +49,7 @@ function Main(props) {
           <Card.Meta>
             <span>{nodeInfo.chain}</span>
           </Card.Meta>
-          <Card.Description>{'socket'}</Card.Description>
+          <Card.Description>{rpcEndpoint}</Card.Description>
         </Card.Content>
         <Card.Content extra>
           <Icon name="setting" />v{nodeInfo.nodeVersion}
@@ -59,13 +61,16 @@ function Main(props) {
               value={blockNumber}
           />
         </Card.Content>
+        <Card.Content extra>
+          <Icon name="time" /> {blockNumberTimer}
+        </Card.Content>
       </Card>
     </Grid.Column>
   )
 }
 
 export default function NodeInfoCos(props) {
-  const client = props.client; console.log('client', client)
+  const client = props.state.client
   return client ? (
     <Main {...props} />
   ) : null

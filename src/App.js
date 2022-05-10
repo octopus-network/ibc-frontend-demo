@@ -43,7 +43,7 @@ function Main() {
 
         const rpcEndpoint = "http://127.0.0.1:26657"
         const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
-        setStateRecvInit({firstAccount, client});
+        setStateRecvInit({firstAccount, client, rpcEndpoint});
     }, [])
 
   const [fromTo/*, setFromTo*/] = useState(true) // if the sender is stateSendInit, fromTo is true; visa versa
@@ -170,7 +170,7 @@ function Main() {
           </Grid.Row>*/}
           <Grid.Row>
             <NodeInfo api={ judgeFromTo(SENDER, fromTo).state.api } socket={ judgeFromTo(SENDER, fromTo).state.socket }/>
-            <NodeInfoCos client={ stateRecvInit.client } />
+            <NodeInfoCos state={ stateRecvInit } />
           </Grid.Row>
 {/*          <Grid.Row>
             <Transfer
