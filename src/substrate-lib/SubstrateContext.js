@@ -3,30 +3,17 @@ import PropTypes from 'prop-types'
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { keyring as Keyring } from '@polkadot/ui-keyring'
-
 import config from '../config'
 
 const parsedQuery = new URLSearchParams(window.location.search)
 const connectedSocketSend = parsedQuery.get('rpc') || config.PROVIDER_SOCKET_SEND
-const connectedSocketRecv = parsedQuery.get('rpc') || config.PROVIDER_SOCKET_RECV
+// const connectedSocketRecv = parsedQuery.get('rpc') || config.PROVIDER_SOCKET_RECV
 ///
 // Initial state for `useReducer`
 
 const initialState = {
   // These are the states
   socket: connectedSocketSend,
-  jsonrpc: { ...jsonrpc, ...config.CUSTOM_RPC_METHODS },
-  keyring: null,
-  keyringState: null,
-  api: null,
-  apiError: null,
-  apiState: null,
-  currentAccount: null,
-}
-
-const initialStateRecv = {
-  // These are the states
-  socket: connectedSocketRecv,
   jsonrpc: { ...jsonrpc, ...config.CUSTOM_RPC_METHODS },
   keyring: null,
   keyringState: null,
@@ -87,18 +74,16 @@ const connect = (state, dispatch) => {
 }
 
 // Loading accounts from dev and polkadot-js extension
-const loadAccounts = (dispatch, dispatchRecv) => {
+const loadAccounts = (dispatch) => {
   dispatch({ type: 'LOAD_KEYRING' })
 
   const asyncLoadAccounts = () => {
     try {
       Keyring.loadAll({ isDevelopment: true })
       dispatch({ type: 'SET_KEYRING', payload: Keyring })
-      dispatchRecv({ type: 'SET_KEYRING', payload: Keyring })
     } catch (e) {
       console.error(e)
       dispatch({ type: 'KEYRING_ERROR' })
-      dispatchRecv({ type: 'KEYRING_ERROR' })
     }
   }
   asyncLoadAccounts()
@@ -112,29 +97,20 @@ const SubstrateContextProvider = props => {
   const [state, dispatch] = useReducer(reducer, initialState)
   connect(state, dispatch)
 
-  const [stateRecv, dispatchRecv] = useReducer(reducer, initialStateRecv)
-  connect(stateRecv, dispatchRecv)
-
-  useEffect(() => {
+  useEffect(async () => {
     const { apiState, keyringState } = state
-    const apiStateRecv = stateRecv.apiState
-    const keyringStateRecv = stateRecv.keyringState
-    if (apiState === 'READY' && apiStateRecv === 'READY' && !keyringState && !keyringStateRecv && !keyringLoadAll) {
+    if (apiState === 'READY' && !keyringState && !keyringLoadAll) {
       keyringLoadAll = true
-      loadAccounts(dispatch, dispatchRecv)
+      loadAccounts(dispatch)
     }
-  }, [state, dispatch, stateRecv, dispatchRecv])
+  }, [state, dispatch])
 
   function setCurrentAccount(acct) {
     dispatch({ type: 'SET_CURRENT_ACCOUNT', payload: acct })
   }
 
-  function setCurrentAccountRecv(acct) {
-    dispatchRecv({ type: 'SET_CURRENT_ACCOUNT', payload: acct })
-  }
-
   return (
-    <SubstrateContext.Provider value={{ state, stateRecv, setCurrentAccount, setCurrentAccountRecv }}>
+    <SubstrateContext.Provider value={{ state, setCurrentAccount }}>
       {props.children}
     </SubstrateContext.Provider>
   )

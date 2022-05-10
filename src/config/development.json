@@ -1,6 +1,6 @@
 {
   "PROVIDER_SOCKET_SEND": "ws://127.0.0.1:9944",
-  "PROVIDER_SOCKET_RECV": "ws://127.0.0.1:8844",
+  "PROVIDER_SOCKET_RECV": "http://127.0.0.1:26657",
   "chains": [
     {
       "key": "ibc-0",
