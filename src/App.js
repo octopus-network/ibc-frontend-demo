@@ -6,7 +6,7 @@ import {
   Grid,
   Sticky,
   Message,
-  /*Dropdown*/
+  Dropdown
 } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
@@ -20,7 +20,7 @@ import NodeInfoCos from './NodeInfoCos'
 // import ReceiveAcc from './ReceiveAcc'
 import {DirectSecp256k1HdWallet} from "@cosmjs/proto-signing";
 import {SigningStargateClient} from "@cosmjs/stargate";
-// import config from './config'
+import config from './config'
 
 /*
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
@@ -39,14 +39,14 @@ function Main() {
     useEffect(async () => {
         const mnemonic = "picture switch picture soap flip dawn nerve easy rebuild company hawk stand menu rhythm unfold engine rug rally weapon raccoon glide mosquito lion dog";
         const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
-        const [firstAccount] = await wallet.getAccounts();console.log("firstAccount", firstAccount)
+        const [firstAccount] = await wallet.getAccounts()
 
         const rpcEndpoint = "http://127.0.0.1:26657"
         const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
         setStateRecvInit({firstAccount, client, rpcEndpoint});
     }, [])
 
-  const [fromTo/*, setFromTo*/] = useState(true) // if the sender is stateSendInit, fromTo is true; visa versa
+  const [fromTo, setFromTo] = useState(true) // if the sender is Substrate Chain, fromTo is true; if the sender is Cosmos Chain, fromTo is true
   // const [transAmount, setTransAmount] = useState(0)
 
   const loader = text => (
@@ -76,12 +76,12 @@ function Main() {
       return _fromTo ? stateRecvInit : stateSendInit
   }
 
-/*  const setChain = (_side, _fromTo) => {
+  const setChain = (_side, _fromTo) => {
     if (_side === SENDER)
       return _fromTo ? config.chains[0].value : config.chains[1].value
     else if (_side === RECEIVER)
       return _fromTo ? config.chains[1].value : config.chains[0].value
-  }*/
+  }
 
   if (stateSendInit.state.apiState === 'ERROR' ) return message(stateSendInit.apiError)
   else if (stateSendInit.state.apiState !== 'READY' ) return loader('Connecting to Substrate')
@@ -92,42 +92,12 @@ function Main() {
     )
   }
 
-/*  const onChange = async (_, data2) => {
+  const onChange = async (_, data2) => {
     if(data2.placeholder === 'chain-send')
       (data2.value === stateSendInit.state.socket) ? setFromTo(true) : setFromTo(false)
     else
       (data2.value === stateSendInit.state.socket) ? setFromTo(false) : setFromTo(true)
-
-/!*    const mnemonic = "picture switch picture soap flip dawn nerve easy rebuild company hawk stand menu rhythm unfold engine rug rally weapon raccoon glide mosquito lion dog";
-    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
-    const [firstAccount] = await wallet.getAccounts();console.log("firstAccount", firstAccount)
-
-    const rpcEndpoint = "http://127.0.0.1:26657";
-    const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
-
-    const recipient = "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5";
-    const amount = {
-      denom: "atom",
-      amount: "8000",
-    };
-
-    const fee = {
-      amount: [
-        {
-          denom: "atom",
-          amount: "2",
-        },
-      ],
-      gas: "180000", // 180k
-    };
-    // const result = await client.getAllBalances('cosmos1xh2jvz9ecty8qdctlgscmys2dr5gz729k0l7x4', "atom");console.log(result)
-    // const result = await client.sendTokens(firstAccount.address, recipient, [amount], fee); console.log("result", result)
-    const result = await client.sendIbcTokens(
-        firstAccount.address, recipient, amount,
-        'transfer', 'channel-0',
-        undefined, undefined, fee, ''); console.log("result", result)
-    assertIsBroadcastTxSuccess(result);*!/
-  }*/
+  }
 
 /*
   const onTransAmountChange = (_transAmount) => {
@@ -148,7 +118,7 @@ function Main() {
       </Sticky>
       <Container>
         <Grid stackable columns="equal">
-          {/*<Grid.Row>
+          {<Grid.Row>
             <Grid.Column>
               <Dropdown
                   placeholder='chain-send'
@@ -167,10 +137,12 @@ function Main() {
                   value={setChain(RECEIVER, fromTo)}
               />
             </Grid.Column>
-          </Grid.Row>*/}
+          </Grid.Row>}
           <Grid.Row>
-            <NodeInfo api={ judgeFromTo(SENDER, fromTo).state.api } socket={ judgeFromTo(SENDER, fromTo).state.socket }/>
-            <NodeInfoCos state={ stateRecvInit } />
+            {fromTo && <NodeInfo api={ judgeFromTo(SENDER, fromTo).state.api } socket={ judgeFromTo(SENDER, fromTo).state.socket }/>}
+            {fromTo && <NodeInfoCos state={ stateRecvInit } />}
+            {!fromTo && <NodeInfoCos state={ stateRecvInit } />}
+            {!fromTo && <NodeInfo api={ stateSendInit.state.api } socket={ stateSendInit.state.socket }/>}
           </Grid.Row>
 {/*          <Grid.Row>
             <Transfer
