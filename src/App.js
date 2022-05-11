@@ -5,7 +5,7 @@ import {
   Loader,
   Grid,
   Sticky,
-  Message,
+  // Message,
   Dropdown
 } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
@@ -16,8 +16,8 @@ import { DeveloperConsole } from './substrate-lib/components'
 // import Events from './Events'
 import NodeInfo from './NodeInfo'
 import NodeInfoCos from './NodeInfoCos'
-// import Transfer from './Transfer'
-// import ReceiveAcc from './ReceiveAcc'
+import Transfer from './Transfer'
+import ReceiveAcc from './ReceiveAcc'
 import {DirectSecp256k1HdWallet} from "@cosmjs/proto-signing";
 import {SigningStargateClient} from "@cosmjs/stargate";
 import config from './config'
@@ -34,20 +34,20 @@ function Main() {
   const state = useSubstrate()
   const stateSendInit = {state: state.state, setCurrentAccount: state.setCurrentAccount}
 
-    const [stateRecvInit, setStateRecvInit] = useState({})
+    const [stateRecvInit, setStateRecvInit] = useState()
 
     useEffect(async () => {
         const mnemonic = "picture switch picture soap flip dawn nerve easy rebuild company hawk stand menu rhythm unfold engine rug rally weapon raccoon glide mosquito lion dog";
         const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
-        const [firstAccount] = await wallet.getAccounts()
-
+        const accountsCos = await wallet.getAccounts();console.log("accountsCos", accountsCos)
         const rpcEndpoint = "http://127.0.0.1:26657"
         const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
-        setStateRecvInit({firstAccount, client, rpcEndpoint});
+        setStateRecvInit({accountsCos, client, rpcEndpoint});
+        console.log(stateRecvInit)
     }, [])
 
   const [fromTo, setFromTo] = useState(true) // if the sender is Substrate Chain, fromTo is true; if the sender is Cosmos Chain, fromTo is true
-  // const [transAmount, setTransAmount] = useState(0)
+  const [transAmount, setTransAmount] = useState(0)
 
   const loader = text => (
     <Dimmer active>
@@ -55,7 +55,7 @@ function Main() {
     </Dimmer>
   )
 
-  const message = errObj => (
+/*  const message = errObj => (
     <Grid centered columns={2} padded>
       <Grid.Column>
         <Message
@@ -67,7 +67,7 @@ function Main() {
         />
       </Grid.Column>
     </Grid>
-  )
+  )*/
 
   const judgeFromTo = (_side, _fromTo) => {
     if (_side === SENDER)
@@ -83,7 +83,7 @@ function Main() {
       return _fromTo ? config.chains[1].value : config.chains[0].value
   }
 
-  if (stateSendInit.state.apiState === 'ERROR' ) return message(stateSendInit.apiError)
+  if (stateSendInit.state.apiState === 'ERROR' || !stateRecvInit ) return 'not ready' /*message(stateSendInit.apiError)*/
   else if (stateSendInit.state.apiState !== 'READY' ) return loader('Connecting to Substrate')
 
   if (stateSendInit.state.keyringState !== 'READY') {
@@ -99,11 +99,9 @@ function Main() {
       (data2.value === stateSendInit.state.socket) ? setFromTo(false) : setFromTo(true)
   }
 
-/*
   const onTransAmountChange = (_transAmount) => {
     setTransAmount(_transAmount)
   }
-*/
 
   return (
     <div>
@@ -143,20 +141,21 @@ function Main() {
             {fromTo && <NodeInfoCos state={ stateRecvInit } />}
             {!fromTo && <NodeInfoCos state={ stateRecvInit } />}
             {!fromTo && <NodeInfo api={ stateSendInit.state.api } socket={ stateSendInit.state.socket }/>}
-          </Grid.Row>
-{/*          <Grid.Row>
+          </Grid.Row>
+
+          <Grid.Row>
             <Transfer
                 state={ judgeFromTo(SENDER, fromTo) }
-                setSenderAccount={ judgeFromTo(RECEIVER, fromTo).setCurrentAccount }
+                setSenderAccount={ judgeFromTo(SENDER, fromTo).setCurrentAccount }
                 onTransAmountChange={ onTransAmountChange }
              />
             <ReceiveAcc
-                state={ judgeFromTo(RECEIVER, fromTo) }
+                state={ stateRecvInit }
                 senderApi={judgeFromTo(SENDER, fromTo).state.api}
                 transAmount={transAmount}
             />
           </Grid.Row>
-          <Grid.Row>
+{/*          <Grid.Row>
             <Events api={ judgeFromTo(SENDER, fromTo).state.api }/>
             <Events api={ judgeFromTo(RECEIVER, fromTo).state.api }/>
           </Grid.Row>*/}

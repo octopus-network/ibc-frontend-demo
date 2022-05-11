@@ -1,52 +1,47 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
-import { TxButtonIbc, TxButton } from './substrate-lib/components'
-import { useSubstrateState } from './substrate-lib'
-import { keyring as Keyring } from '@polkadot/ui-keyring'
-import { u8aToHex } from '@polkadot/util';
+import { Form, Input, Grid, /*Label, Icon,*/ Dropdown } from 'semantic-ui-react'
+// import { TxButtonIbc, TxButton } from './substrate-lib/components'
+// import { useSubstrateState } from './substrate-lib'
+// import { keyring as Keyring } from '@polkadot/ui-keyring'
+// import { u8aToHex } from '@polkadot/util';
 
 export default function Main(props) {
   const [currentAccount, setCurrentAccount] = useState(0)
   const [accountBalance, setAccountBalance] = useState(0)
-  const api = props.state.state.api
-
-  const [status, setStatus] = useState(null)
+  const state = props.state
+  const client = props.state.client
+console.log(props)
+  const [status/*, setStatus*/] = useState(null)
   const [formState, setFormState] = useState({ addressTo: '' })
 
-  const acctAddr = acct => (acct ? acct.address : '')
+  // const acctAddr = acct => (acct ? acct.address : '')
   useEffect(() => {
-    let unsubscribe
     currentAccount &&
-    api.query.system
-      .account(acctAddr(currentAccount), balance =>
-          setAccountBalance(balance.data.free.toHuman())
-      )
-      .then(unsub => (unsubscribe = unsub))
-      .catch(console.error)
-
-    return () => unsubscribe && unsubscribe()
+    client.getAllBalances(currentAccount).then(blc => {
+      console.log(blc)
+        setAccountBalance(blc[0].amount)
+    }).catch(console.error)
   }, [currentAccount, setCurrentAccount])
 
   const onChange = (_, data) => {
-      setCurrentAccount(keyring.getPair(data.value))
+      setCurrentAccount(data.value)
       setFormState(prev => ({ ...prev, [data.state]: data.value }))
   }
 
   const { addressTo } = formState
 
-  const { keyring } = useSubstrateState()
-  const accounts = keyring.getPairs()
+  const accounts = state.accountsCos
 
   const availableAccounts = []
   accounts.map(account => {
     return availableAccounts.push({
-      key: account.meta.name,
-      text: account.meta.name,
+      key: account.address,
+      text: account.address,
       value: account.address,
     })
   })
 
-  const ss58ToHex = (ss58) => {
+/*  const ss58ToHex = (ss58) => {
       if (ss58) {
           const publicKey = Keyring.decodeAddress(ss58)
           const hexPublicKey = u8aToHex(publicKey)
@@ -55,24 +50,13 @@ export default function Main(props) {
       return ''
   }
 
-  const toHexStr = (myString) => '0x' + new Buffer(myString).toString('hex')
+  const toHexStr = (myString) => '0x' + new Buffer(myString).toString('hex')*/
 
   return (
       <Grid.Column width={8}>
         <h1>Receiver</h1>
         <Form>
           <Form.Field>
-            <Label basic color="teal">
-              <Icon name="hand point right" />1 Unit = 1000000000000&nbsp;
-            </Label>
-            <Label
-                basic
-                color="teal"
-                style={{ marginLeft: 0, marginTop: '.5em' }}
-            >
-              <Icon name="hand point right" />
-              Transfer more than the existential amount for account with 0 balance
-            </Label>
           </Form.Field>
 
           <Form.Field>
@@ -109,7 +93,7 @@ export default function Main(props) {
                 />
             </Form.Field>
 
-          <Form.Field style={{ textAlign: 'center' }}>
+{/*          <Form.Field style={{ textAlign: 'center' }}>
             <TxButton
                 label="Query Channel"
                 type="QUERY"
@@ -138,7 +122,7 @@ export default function Main(props) {
                   senderApi: props.senderApi,
                 }}
             />
-          </Form.Field>
+          </Form.Field>*/}
           <div style={{ overflowWrap: 'break-word' }}>{status}</div>
         </Form>
       </Grid.Column>

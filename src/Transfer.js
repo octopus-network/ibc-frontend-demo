@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
+import { Form, Input, Grid, Dropdown } from 'semantic-ui-react'
 
 function Main(props) {
   const [accountBalance, setAccountBalance] = useState(0)
@@ -84,20 +84,6 @@ function Main(props) {
     <Grid.Column width={8}>
       <h1>Sender</h1>
       <Form>
-        <Form.Field>
-          <Label basic color="teal">
-            <Icon name="hand point right" />1 Unit = 1000000000000&nbsp;
-          </Label>
-          <Label
-            basic
-            color="teal"
-            style={{ marginLeft: 0, marginTop: '.5em' }}
-          >
-            <Icon name="hand point right" />
-            Transfer more than the existential amount for account with 0 balance
-          </Label>
-        </Form.Field>
-
         <Form.Field>
           <Dropdown
             placeholder="Select from available addresses"
