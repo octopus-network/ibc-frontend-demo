@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Input, Grid, /*Label, Icon,*/ Dropdown } from 'semantic-ui-react'
-// import { TxButtonIbc, TxButton } from './substrate-lib/components'
+import { TxButtonIbc, TxButton } from './substrate-lib/components'
 // import { useSubstrateState } from './substrate-lib'
 // import { keyring as Keyring } from '@polkadot/ui-keyring'
 // import { u8aToHex } from '@polkadot/util';
@@ -11,7 +11,7 @@ export default function Main(props) {
   const state = props.state
   const client = props.state.client
 console.log(props)
-  const [status/*, setStatus*/] = useState(null)
+  const [status, setStatus] = useState(null)
   const [formState, setFormState] = useState({ addressTo: '' })
 
   // const acctAddr = acct => (acct ? acct.address : '')
@@ -48,9 +48,9 @@ console.log(props)
           return hexPublicKey.substring(2)
       }
       return ''
-  }
+  }*/
 
-  const toHexStr = (myString) => '0x' + new Buffer(myString).toString('hex')*/
+  const toHexStr = (myString) => '0x' + new Buffer(myString).toString('hex')
 
   return (
       <Grid.Column width={8}>
@@ -93,7 +93,7 @@ console.log(props)
                 />
             </Form.Field>
 
-{/*          <Form.Field style={{ textAlign: 'center' }}>
+          <Form.Field style={{ textAlign: 'center' }}>
             <TxButton
                 label="Query Channel"
                 type="QUERY"
@@ -115,14 +115,14 @@ console.log(props)
                   palletRpc: 'ibc',
                   callable: 'transfer',
                   inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr('atom'), props.transAmount,
-                      toHexStr(ss58ToHex(addressTo)),
+                      /*toHexStr(ss58ToHex(addressTo))*/toHexStr(addressTo),
                       999999, Date.now() + 999999],
                   paramFields: [true, true, true, true, true, true, true],
-                  state: props.state,
+                  state: props.stateSend,
                   senderApi: props.senderApi,
                 }}
             />
-          </Form.Field>*/}
+          </Form.Field>
           <div style={{ overflowWrap: 'break-word' }}>{status}</div>
         </Form>
       </Grid.Column>

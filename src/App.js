@@ -151,6 +151,7 @@ function Main() {
              />
             <ReceiveAcc
                 state={ stateRecvInit }
+                stateSend={ stateSendInit }
                 senderApi={judgeFromTo(SENDER, fromTo).state.api}
                 transAmount={transAmount}
             />
