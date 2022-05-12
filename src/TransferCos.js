@@ -4,12 +4,14 @@ import { TxButtonIbc, TxButton } from './substrate-lib/components'
 // import { useSubstrateState } from './substrate-lib'
 // import { keyring as Keyring } from '@polkadot/ui-keyring'
 // import { u8aToHex } from '@polkadot/util';
+import { toHexStr } from "./substrate-lib/utils";
 
 export default function Main(props) {
   const [currentAccount, setCurrentAccount] = useState(0)
   const [accountBalance, setAccountBalance] = useState(0)
   const state = props.state
   const client = props.state.client
+  const direction = props.direction
 console.log(props)
   const [status, setStatus] = useState(null)
   const [formState, setFormState] = useState({ addressTo: '' })
@@ -41,6 +43,11 @@ console.log(props)
     })
   })
 
+    const [amount, setAmount] = useState(0)
+    const onChangeAmount = (_, data) => {
+        setAmount(data.value)
+        props.onTransAmountChange(data.value)
+    }
 /*  const ss58ToHex = (ss58) => {
       if (ss58) {
           const publicKey = Keyring.decodeAddress(ss58)
@@ -50,11 +57,11 @@ console.log(props)
       return ''
   }*/
 
-  const toHexStr = (myString) => '0x' + new Buffer(myString).toString('hex')
+  // const toHexStr = (myString) => '0x' + new Buffer(myString).toString('hex')
 
   return (
       <Grid.Column width={8}>
-        <h1>Receiver</h1>
+        <h1>{!direction ? 'Sender' : 'Receiver'}</h1>
         <Form>
           <Form.Field>
           </Form.Field>
@@ -93,7 +100,18 @@ console.log(props)
                 />
             </Form.Field>
 
-          <Form.Field style={{ textAlign: 'center' }}>
+            {!direction && <Form.Field>
+                <Input
+                    fluid
+                    label="Amount"
+                    type="text"
+                    state="amount"
+                    value={amount}
+                    onChange={onChangeAmount}
+                />
+            </Form.Field>}
+
+            <Form.Field style={{ textAlign: 'center' }}>
             <TxButton
                 label="Query Channel"
                 type="QUERY"
@@ -118,7 +136,7 @@ console.log(props)
                       /*toHexStr(ss58ToHex(addressTo))*/toHexStr(addressTo),
                       999999, Date.now() + 999999],
                   paramFields: [true, true, true, true, true, true, true],
-                  state: props.stateSend,
+                  state: props.stateSub,
                   senderApi: props.senderApi,
                 }}
             />

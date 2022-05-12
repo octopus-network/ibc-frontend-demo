@@ -16,8 +16,8 @@ import { DeveloperConsole } from './substrate-lib/components'
 // import Events from './Events'
 import NodeInfo from './NodeInfo'
 import NodeInfoCos from './NodeInfoCos'
-import Transfer from './Transfer'
-import ReceiveAcc from './ReceiveAcc'
+import TransferSub from './TransferSub'
+import TransferCos from './TransferCos'
 import {DirectSecp256k1HdWallet} from "@cosmjs/proto-signing";
 import {SigningStargateClient} from "@cosmjs/stargate";
 import config from './config'
@@ -144,15 +144,20 @@ function Main() {
           </Grid.Row>
 
           <Grid.Row>
-            <Transfer
-                state={ judgeFromTo(SENDER, fromTo) }
-                setSenderAccount={ judgeFromTo(SENDER, fromTo).setCurrentAccount }
+            <TransferSub
+                direction={fromTo}
+                state={ stateSendInit }
+                stateCos={ stateRecvInit }
+                setSenderAccount={ stateSendInit.setCurrentAccount }
                 onTransAmountChange={ onTransAmountChange }
+                transAmount={transAmount}
              />
-            <ReceiveAcc
+            <TransferCos
+                direction={fromTo}
                 state={ stateRecvInit }
-                stateSend={ stateSendInit }
-                senderApi={judgeFromTo(SENDER, fromTo).state.api}
+                stateSub={ stateSendInit }
+                senderApi={stateSendInit.state.api}
+                onTransAmountChange={ onTransAmountChange }
                 transAmount={transAmount}
             />
           </Grid.Row>

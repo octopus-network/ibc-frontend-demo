@@ -16,5 +16,6 @@ const utils = {
     ],
   },
 }
+export const toHexStr = (myString) => '0x' + new Buffer(myString).toString('hex')
 
 export default utils
