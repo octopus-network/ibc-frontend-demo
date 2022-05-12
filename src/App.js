@@ -32,22 +32,22 @@ const RECEIVER = 'receiver'
 
 function Main() {
   const state = useSubstrate()
-  const stateSendInit = {state: state.state, setCurrentAccount: state.setCurrentAccount}
+  const stateSubInit = {state: state.state, setCurrentAccount: state.setCurrentAccount}
 
-    const [stateRecvInit, setStateRecvInit] = useState()
+    const [stateCosInit, setStateCosInit] = useState()
 
     useEffect(async () => {
         const mnemonic = "picture switch picture soap flip dawn nerve easy rebuild company hawk stand menu rhythm unfold engine rug rally weapon raccoon glide mosquito lion dog";
         const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
-        const accountsCos = await wallet.getAccounts();console.log("accountsCos", accountsCos)
-        const rpcEndpoint = "http://127.0.0.1:26657"
+        const accountsCos = await wallet.getAccounts();
+        const rpcEndpoint = config.PROVIDER_SOCKET_RECV
         const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
-        setStateRecvInit({accountsCos, client, rpcEndpoint});
-        console.log(stateRecvInit)
+        setStateCosInit({accountsCos, client, rpcEndpoint});
     }, [])
 
   const [fromTo, setFromTo] = useState(true) // if the sender is Substrate Chain, fromTo is true; if the sender is Cosmos Chain, fromTo is true
   const [transAmount, setTransAmount] = useState(0)
+  const [tokenName, setTransTokenName] = useState('atom')
 
   const loader = text => (
     <Dimmer active>
@@ -71,9 +71,9 @@ function Main() {
 
   const judgeFromTo = (_side, _fromTo) => {
     if (_side === SENDER)
-      return _fromTo ? stateSendInit : stateRecvInit
+      return _fromTo ? stateSubInit : stateCosInit
     else if (_side === RECEIVER)
-      return _fromTo ? stateRecvInit : stateSendInit
+      return _fromTo ? stateCosInit : stateSubInit
   }
 
   const setChain = (_side, _fromTo) => {
@@ -83,10 +83,10 @@ function Main() {
       return _fromTo ? config.chains[1].value : config.chains[0].value
   }
 
-  if (stateSendInit.state.apiState === 'ERROR' || !stateRecvInit ) return 'not ready' /*message(stateSendInit.apiError)*/
-  else if (stateSendInit.state.apiState !== 'READY' ) return loader('Connecting to Substrate')
+  if (stateSubInit.state.apiState === 'ERROR' || !stateCosInit ) return 'not ready' /*message(stateSubInit.apiError)*/
+  else if (stateSubInit.state.apiState !== 'READY' ) return loader('Connecting to Substrate')
 
-  if (stateSendInit.state.keyringState !== 'READY') {
+  if (stateSubInit.state.keyringState !== 'READY') {
     return loader(
       "Loading accounts (please review any extension's authorization)"
     )
@@ -94,14 +94,18 @@ function Main() {
 
   const onChange = async (_, data2) => {
     if(data2.placeholder === 'chain-send')
-      (data2.value === stateSendInit.state.socket) ? setFromTo(true) : setFromTo(false)
+      (data2.value === stateSubInit.state.socket) ? setFromTo(true) : setFromTo(false)
     else
-      (data2.value === stateSendInit.state.socket) ? setFromTo(false) : setFromTo(true)
+      (data2.value === stateSubInit.state.socket) ? setFromTo(false) : setFromTo(true)
   }
 
   const onTransAmountChange = (_transAmount) => {
     setTransAmount(_transAmount)
   }
+
+    const onTransTokenChange = (_tokenName) => {
+        setTransTokenName(_tokenName)
+    }
 
   return (
     <div>
@@ -138,43 +142,51 @@ function Main() {
           </Grid.Row>}
           <Grid.Row>
             {fromTo && <NodeInfo api={ judgeFromTo(SENDER, fromTo).state.api } socket={ judgeFromTo(SENDER, fromTo).state.socket }/>}
-            {fromTo && <NodeInfoCos state={ stateRecvInit } />}
-            {!fromTo && <NodeInfoCos state={ stateRecvInit } />}
-            {!fromTo && <NodeInfo api={ stateSendInit.state.api } socket={ stateSendInit.state.socket }/>}
+            {fromTo && <NodeInfoCos state={ stateCosInit } />}
+            {!fromTo && <NodeInfoCos state={ stateCosInit } />}
+            {!fromTo && <NodeInfo api={ stateSubInit.state.api } socket={ stateSubInit.state.socket }/>}
           </Grid.Row>
 
           <Grid.Row>
             {fromTo && <TransferSub
                 direction={fromTo}
-                state={ stateSendInit }
-                stateCos={ stateRecvInit }
-                setSenderAccount={ stateSendInit.setCurrentAccount }
+                state={ stateSubInit }
+                stateCos={ stateCosInit }
+                setSenderAccount={ stateSubInit.setCurrentAccount }
                 onTransAmountChange={ onTransAmountChange }
+                onTransTokenChange={ onTransTokenChange }
                 transAmount={transAmount}
+                tokenName={tokenName}
              />}
             {fromTo && <TransferCos
                 direction={fromTo}
-                state={ stateRecvInit }
-                stateSub={ stateSendInit }
-                senderApi={stateSendInit.state.api}
+                state={ stateCosInit }
+                stateSub={ stateSubInit }
+                senderApi={stateSubInit.state.api}
                 onTransAmountChange={ onTransAmountChange }
+                onTransTokenChange={ onTransTokenChange }
                 transAmount={transAmount}
+                tokenName={tokenName}
             />}
               {!fromTo && <TransferCos
                   direction={fromTo}
-                  state={ stateRecvInit }
-                  stateSub={ stateSendInit }
-                  senderApi={stateSendInit.state.api}
+                  state={ stateCosInit }
+                  stateSub={ stateSubInit }
+                  senderApi={stateSubInit.state.api}
                   onTransAmountChange={ onTransAmountChange }
+                  onTransTokenChange={ onTransTokenChange }
                   transAmount={transAmount}
+                  tokenName={tokenName}
               />}
               {!fromTo && <TransferSub
                   direction={fromTo}
-                  state={ stateSendInit }
-                  stateCos={ stateRecvInit }
-                  setSenderAccount={ stateSendInit.setCurrentAccount }
+                  state={ stateSubInit }
+                  stateCos={ stateCosInit }
+                  setSenderAccount={ stateSubInit.setCurrentAccount }
                   onTransAmountChange={ onTransAmountChange }
+                  onTransTokenChange={ onTransTokenChange }
                   transAmount={transAmount}
+                  tokenName={tokenName}
               />}
           </Grid.Row>
 {/*          <Grid.Row>

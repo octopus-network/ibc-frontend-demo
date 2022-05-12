@@ -135,7 +135,7 @@ console.log(props)
                 attrs={{
                   palletRpc: 'ibc',
                   callable: 'transfer',
-                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr('atom'), props.transAmount,
+                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr(props.tokenName), props.transAmount,
                       /*toHexStr(ss58ToHex(addressTo))*/toHexStr(addressTo),
                       999999, Date.now() + 999999],
                   paramFields: [true, true, true, true, true, true, true],

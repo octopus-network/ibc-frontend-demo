@@ -83,6 +83,12 @@ function Main(props) {
     props.onTransAmountChange(data.value)
   }
 
+  const [tokenName, setTokenName] = useState('atom')
+  const onChangeTokenName = (_, data) => {console.log('data', data)
+    setTokenName(data.value)
+    props.onTransTokenChange(data.value)
+  }
+
   return (
     <Grid.Column width={8}>
       <h1>{direction ? 'Sender' : 'Receiver'}</h1>
@@ -120,6 +126,17 @@ function Main(props) {
               state="accountBalance"
           />
         </Form.Field>
+
+        {direction && <Form.Field>
+          <Input
+              fluid
+              label="Token"
+              type="text"
+              state="tokenName"
+              value={tokenName}
+              onChange={onChangeTokenName}
+          />
+        </Form.Field>}
 
         {direction && <Form.Field>
           <Input
