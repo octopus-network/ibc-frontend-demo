@@ -48,6 +48,12 @@ console.log(props)
         setAmount(data.value)
         props.onTransAmountChange(data.value)
     }
+
+    const [tokenName, setTokenName] = useState('atom')
+    const onChangeTokenName = (_, data) => {console.log('data', data)
+      setTokenName(data.value)
+      props.onTransTokenChange(data.value)
+    }
 /*  const ss58ToHex = (ss58) => {
       if (ss58) {
           const publicKey = Keyring.decodeAddress(ss58)
@@ -99,6 +105,17 @@ console.log(props)
                     state="accountBalance"
                 />
             </Form.Field>
+
+          {!direction && <Form.Field>
+            <Input
+                fluid
+                label="Token"
+                type="text"
+                state="tokenName"
+                value={tokenName}
+                onChange={onChangeTokenName}
+            />
+          </Form.Field>}
 
             {!direction && <Form.Field>
                 <Input

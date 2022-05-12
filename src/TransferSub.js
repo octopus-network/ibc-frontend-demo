@@ -171,8 +171,8 @@ function Main(props) {
               type="SIGNED-TX"
               setStatus={setStatus}
               attrs={{
-                inputParams: [/*toHexStr(ss58ToHex(addressTo))*/"cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5",  {
-                  denom: "atom",
+                inputParams: [/*toHexStr(ss58ToHex(addressTo))*/addressFrom,  {
+                  denom: props.tokenName,
                   amount: props.transAmount,
                 },
                   'transfer', 'channel-0'],
