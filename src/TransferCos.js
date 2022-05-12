@@ -111,7 +111,8 @@ console.log(props)
                 />
             </Form.Field>}
 
-            <Form.Field style={{ textAlign: 'center' }}>
+        {direction &&
+        <Form.Field style={{ textAlign: 'center' }}>
             <TxButton
                 label="Query Channel"
                 type="QUERY"
@@ -124,7 +125,9 @@ console.log(props)
                 }}
             />
           </Form.Field>
-          <Form.Field style={{ textAlign: 'center' }}>
+        }
+        {direction &&
+            <Form.Field style={{ textAlign: 'center' }}>
             <TxButtonIbc
                 label="Submit"
                 type="SIGNED-TX"
@@ -140,8 +143,8 @@ console.log(props)
                   senderApi: props.senderApi,
                 }}
             />
-          </Form.Field>
-          <div style={{ overflowWrap: 'break-word' }}>{status}</div>
+          </Form.Field>}
+          {direction && <div style={{ overflowWrap: 'break-word' }}>{status}</div>}
         </Form>
       </Grid.Column>
   )

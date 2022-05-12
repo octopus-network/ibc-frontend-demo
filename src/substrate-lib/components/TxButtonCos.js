@@ -30,11 +30,11 @@ function TxButtonCos({
   }
 
   const txResHandler = ( status ) => {
+    ( status.code === 0 )
+      ? setStatus(`😉 Finalized. Block hash: ${status.transactionHash}`)
+      : setStatus(`Current transaction error: ${status.rawLog}`)
     console.log(status)
   }
-    // status.isFinalized
-    //   ? setStatus(`😉 Finalized. Block hash: ${status.asFinalized.toString()}`)
-    //   : setStatus(`Current transaction status: ${status.type}`)
 
   const txErrHandler = err => {
     setStatus(`😞 Transaction Failed: ${err.toString()}`)

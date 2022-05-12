@@ -144,22 +144,38 @@ function Main() {
           </Grid.Row>
 
           <Grid.Row>
-            <TransferSub
+            {fromTo && <TransferSub
                 direction={fromTo}
                 state={ stateSendInit }
                 stateCos={ stateRecvInit }
                 setSenderAccount={ stateSendInit.setCurrentAccount }
                 onTransAmountChange={ onTransAmountChange }
                 transAmount={transAmount}
-             />
-            <TransferCos
+             />}
+            {fromTo && <TransferCos
                 direction={fromTo}
                 state={ stateRecvInit }
                 stateSub={ stateSendInit }
                 senderApi={stateSendInit.state.api}
                 onTransAmountChange={ onTransAmountChange }
                 transAmount={transAmount}
-            />
+            />}
+              {!fromTo && <TransferCos
+                  direction={fromTo}
+                  state={ stateRecvInit }
+                  stateSub={ stateSendInit }
+                  senderApi={stateSendInit.state.api}
+                  onTransAmountChange={ onTransAmountChange }
+                  transAmount={transAmount}
+              />}
+              {!fromTo && <TransferSub
+                  direction={fromTo}
+                  state={ stateSendInit }
+                  stateCos={ stateRecvInit }
+                  setSenderAccount={ stateSendInit.setCurrentAccount }
+                  onTransAmountChange={ onTransAmountChange }
+                  transAmount={transAmount}
+              />}
           </Grid.Row>
 {/*          <Grid.Row>
             <Events api={ judgeFromTo(SENDER, fromTo).state.api }/>

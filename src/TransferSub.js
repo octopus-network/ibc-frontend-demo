@@ -166,7 +166,7 @@ function Main(props) {
         </Form.Field>
         }
 
-        <div style={{ overflowWrap: 'break-word' }}>{status}</div>
+        {!direction && <div style={{ overflowWrap: 'break-word' }}>{status}</div>}
       </Form>
     </Grid.Column>
   )
