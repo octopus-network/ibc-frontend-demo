@@ -12,5 +12,17 @@
       "text": "ibc-1",
       "value": "ws://127.0.0.1:8844"
     }
+    ],
+    "assets": [
+      {
+        "id": 1,
+        "name": "token1",
+        "amount": 0
+      },
+      {
+        "id": 2,
+        "name": "token2",
+        "amount": 0
+      }
   ]
 }

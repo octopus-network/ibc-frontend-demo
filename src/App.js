@@ -34,6 +34,11 @@ function Main() {
 
   const [fromTo, setFromTo] = useState(true) // if the sender is stateSendInit, fromTo is true; visa versa
   const [transAmount, setTransAmount] = useState(0)
+  const [tokenName, setTransTokenName] = useState('atom')
+
+  const onTransTokenChange = (_tokenName) => {
+    setTransTokenName(_tokenName)
+  }
 
   const loader = text => (
     <Dimmer active>
@@ -83,36 +88,6 @@ function Main() {
       (data2.value === stateSendInit.state.socket) ? setFromTo(true) : setFromTo(false)
     else
       (data2.value === stateSendInit.state.socket) ? setFromTo(false) : setFromTo(true)
-
-/*    const mnemonic = "picture switch picture soap flip dawn nerve easy rebuild company hawk stand menu rhythm unfold engine rug rally weapon raccoon glide mosquito lion dog";
-    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic);
-    const [firstAccount] = await wallet.getAccounts();console.log("firstAccount", firstAccount)
-
-    const rpcEndpoint = "http://127.0.0.1:26657";
-    const client = await SigningStargateClient.connectWithSigner(rpcEndpoint, wallet);
-
-    const recipient = "cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5";
-    const amount = {
-      denom: "atom",
-      amount: "8000",
-    };
-
-    const fee = {
-      amount: [
-        {
-          denom: "atom",
-          amount: "2",
-        },
-      ],
-      gas: "180000", // 180k
-    };
-    // const result = await client.getAllBalances('cosmos1xh2jvz9ecty8qdctlgscmys2dr5gz729k0l7x4', "atom");console.log(result)
-    // const result = await client.sendTokens(firstAccount.address, recipient, [amount], fee); console.log("result", result)
-    const result = await client.sendIbcTokens(
-        firstAccount.address, recipient, amount,
-        'transfer', 'channel-0',
-        undefined, undefined, fee, ''); console.log("result", result)
-    assertIsBroadcastTxSuccess(result);*/
   }
 
   const onTransAmountChange = (_transAmount) => {
@@ -161,11 +136,13 @@ function Main() {
                 state={ judgeFromTo(SENDER, fromTo) }
                 setSenderAccount={ judgeFromTo(RECEIVER, fromTo).setCurrentAccount }
                 onTransAmountChange={ onTransAmountChange }
+                onTransTokenChange={ onTransTokenChange }
              />
             <ReceiveAcc
                 state={ judgeFromTo(RECEIVER, fromTo) }
                 senderApi={judgeFromTo(SENDER, fromTo).state.api}
                 transAmount={transAmount}
+                tokenName={tokenName}
             />
           </Grid.Row>
           <Grid.Row>
