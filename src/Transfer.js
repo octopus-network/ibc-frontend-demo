@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
+import { Form, Input, Grid,
+  Dropdown } from 'semantic-ui-react'
+import config from './config'
 
 function Main(props) {
   const [accountBalance, setAccountBalance] = useState(0)
+  const [assets, setAssets] = useState([])
 
   const {
     setCurrentAccount,
@@ -24,7 +27,7 @@ function Main(props) {
   const acctAddr = acct => (acct ? acct.address : '')
 
   // Set the initial address
-  useEffect(() => {
+  useEffect(async () => {
     // `setCurrentAccount()` is called only when currentAccount is null (uninitialized)
     !currentAccount &&
     initialAddress.length > 0 &&
@@ -42,6 +45,13 @@ function Main(props) {
         )
         .then(unsub => (unsubscribe = unsub))
         .catch(console.error)
+
+    const _assets = config.assets
+    _assets.map(async (item,index)=>{
+      const acc = await api.query.octopusAssets.account(item.id, acctAddr(currentAccount))
+      _assets[index].amount = acc.balance.toString()
+    })
+    setAssets(_assets)
 
     return () => unsubscribe && unsubscribe()
   }, [currentAccount, setCurrentAccount, keyring, initialAddress])
@@ -91,17 +101,15 @@ function Main(props) {
       <h1>Sender</h1>
       <Form>
         <Form.Field>
-          <Label basic color="teal">
-            <Icon name="hand point right" />1 Unit = 1000000000000&nbsp;
-          </Label>
-          <Label
-            basic
-            color="teal"
-            style={{ marginLeft: 0, marginTop: '.5em' }}
-          >
-            <Icon name="hand point right" />
-            Transfer more than the existential amount for account with 0 balance
-          </Label>
+          {assets.map((item,index)=>{
+              return <Input
+                  fluid
+                  label={item.name}
+                  type="text"
+                  state="tokenAmount"
+                  value={item.amount}
+              />
+            })}
         </Form.Field>
 
         <Form.Field>
@@ -130,7 +138,7 @@ function Main(props) {
         <Form.Field>
           <Input
               fluid
-              label="Balance"
+              label="Native Asset Balance"
               type="text"
               placeholder="balance"
               value={accountBalance}
@@ -141,7 +149,7 @@ function Main(props) {
         <Form.Field>
           <Input
               fluid
-              label="Token"
+              label="Token to Send"
               type="text"
               state="tokenName"
               value={tokenName}
