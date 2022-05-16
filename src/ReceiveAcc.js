@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Input, Grid, Label, Icon, Dropdown } from 'semantic-ui-react'
+import { Form, Input, Grid, Dropdown } from 'semantic-ui-react'
 import { TxButtonIbc, TxButton } from './substrate-lib/components'
 import { useSubstrateState } from './substrate-lib'
 import { keyring as Keyring } from '@polkadot/ui-keyring'
 import { u8aToHex } from '@polkadot/util';
+import config from './config'
 
 export default function Main(props) {
   const [currentAccount, setCurrentAccount] = useState(0)
   const [accountBalance, setAccountBalance] = useState(0)
+  const [assets, setAssets] = useState([...config.assets])
   const api = props.state.state.api
+  const socket = props.state.state.socket
 
   const [status, setStatus] = useState(null)
   const [formState, setFormState] = useState({ addressTo: '' })
@@ -24,13 +27,27 @@ export default function Main(props) {
       .then(unsub => (unsubscribe = unsub))
       .catch(console.error)
 
+      updateAssets();console.log("updateAssets()")
     return () => unsubscribe && unsubscribe()
-  }, [currentAccount, setCurrentAccount])
+  }, [currentAccount, setCurrentAccount, socket])
 
   const onChange = (_, data) => {
       setCurrentAccount(keyring.getPair(data.value))
       setFormState(prev => ({ ...prev, [data.state]: data.value }))
   }
+
+    const updateAssets = () => {
+        currentAccount &&
+        Promise.all(assets.map(async (item, index)=>{
+            const acc = await api.query.octopusAssets.account(item.id, acctAddr(currentAccount))
+            return {...item, amount: acc.balance.toString()}
+        })).then((_assets) => setAssets(_assets))
+    }
+
+    useEffect(() => {
+        // const id = setInterval(updateAssets, 3000)
+        // return () => clearInterval(id)
+    }, [])
 
   const { addressTo } = formState
 
@@ -62,19 +79,16 @@ export default function Main(props) {
         <h1>Receiver</h1>
         <Form>
           <Form.Field>
-            <Label basic color="teal">
-              <Icon name="hand point right" />1 Unit = 1000000000000&nbsp;
-            </Label>
-            <Label
-                basic
-                color="teal"
-                style={{ marginLeft: 0, marginTop: '.5em' }}
-            >
-              <Icon name="hand point right" />
-              Transfer more than the existential amount for account with 0 balance
-            </Label>
+              {assets.map((item,index)=>{
+                  return <Input
+                      fluid
+                      label={item.name}
+                      type="text"
+                      key={index}
+                      value={item.amount}
+                  />
+              })}
           </Form.Field>
-
           <Form.Field>
             <Dropdown
                 placeholder="Select from available addresses"
@@ -101,7 +115,7 @@ export default function Main(props) {
             <Form.Field>
                 <Input
                     fluid
-                    label="Balance"
+                    label="Native Asset Balance"
                     type="text"
                     placeholder="balance"
                     value={accountBalance}

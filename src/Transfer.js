@@ -5,7 +5,7 @@ import config from './config'
 
 function Main(props) {
   const [accountBalance, setAccountBalance] = useState(0)
-  const [assets, setAssets] = useState([])
+  const [assets, setAssets] = useState([...config.assets])
 
   const {
     setCurrentAccount,
@@ -46,16 +46,14 @@ function Main(props) {
         .then(unsub => (unsubscribe = unsub))
         .catch(console.error)
 
-    const _assets = [...config.assets]
-    _assets.map(async (item,index)=>{
+    currentAccount &&
+    Promise.all(assets.map(async (item, index)=>{
       const acc = await api.query.octopusAssets.account(item.id, acctAddr(currentAccount))
-      _assets[index].amount = acc.balance.toString()
-    })
-    setAssets(_assets)
-    console.log("assets", assets)
+      return {...item, amount: acc.balance.toString()}
+    })).then((_assets) => setAssets(_assets))
+
     return () => unsubscribe && unsubscribe()
   }, [currentAccount, setCurrentAccount, keyring, initialAddress])
-  console.log("_assets", assets)
 
   const [formState, setFormState] = useState({ addressFrom: ''})
   const { addressFrom } = formState
@@ -102,15 +100,14 @@ function Main(props) {
       <h1>Sender</h1>
       <Form>
         <Form.Field>
-          {assets.map((item,index)=>{console.log("in html", item.amount)
-              /*return <Input
+          {assets.map((item,index)=>{
+              return <Input
                   fluid
                   label={item.name}
                   type="text"
                   key={index}
                   value={item.amount}
-              />*/
-              return <span key={index}>{item.amount}</span>
+              />
             })
           }
         </Form.Field>
