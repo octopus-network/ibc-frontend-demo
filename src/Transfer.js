@@ -46,11 +46,7 @@ function Main(props) {
         .then(unsub => (unsubscribe = unsub))
         .catch(console.error)
 
-    currentAccount &&
-    Promise.all(assets.map(async (item, index)=>{
-      const acc = await api.query.octopusAssets.account(item.id, acctAddr(currentAccount))
-      return {...item, amount: acc.balance.toString()}
-    })).then((_assets) => setAssets(_assets))
+    updateAssets()
 
     return () => unsubscribe && unsubscribe()
   }, [currentAccount, setCurrentAccount, keyring, initialAddress])
@@ -59,10 +55,24 @@ function Main(props) {
   const { addressFrom } = formState
 
   const [accSelected, setAccSelected] = useState(initialAddress)
+
+  const updateAssets = () => {
+    currentAccount &&
+    Promise.all(assets.map(async (item, index)=>{
+      const acc = await api.query.octopusAssets.account(item.id, acctAddr(currentAccount))
+      return {...item, amount: acc.balance.toString()}
+    })).then((_assets) => setAssets(_assets))
+  }
+
   useEffect(() => {
     setCurrentAccount(keyring.getPair(accSelected))
     setSenderAccount(keyring.getPair(accSelected))
   }, [socket])
+
+  useEffect(() => {
+    const id = setInterval(updateAssets, 3000)
+    return () => clearInterval(id)
+  })
 
   const onChange = (_, data) => {
     setCurrentAccount(keyring.getPair(data.value))

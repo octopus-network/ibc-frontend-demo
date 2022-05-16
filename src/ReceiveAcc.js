@@ -27,7 +27,7 @@ export default function Main(props) {
       .then(unsub => (unsubscribe = unsub))
       .catch(console.error)
 
-      updateAssets();console.log("updateAssets()")
+      updateAssets()
     return () => unsubscribe && unsubscribe()
   }, [currentAccount, setCurrentAccount, socket])
 
@@ -45,9 +45,9 @@ export default function Main(props) {
     }
 
     useEffect(() => {
-        // const id = setInterval(updateAssets, 3000)
-        // return () => clearInterval(id)
-    }, [])
+        const id = setInterval(updateAssets, 3000)
+        return () => clearInterval(id)
+    })
 
   const { addressTo } = formState
 
