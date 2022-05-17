@@ -67,12 +67,9 @@ function Main(props) {
   useEffect(() => {
     setCurrentAccount(keyring.getPair(accSelected))
     setSenderAccount(keyring.getPair(accSelected))
-  }, [socket])
-
-  useEffect(() => {
     const id = setInterval(updateAssets, 3000)
     return () => clearInterval(id)
-  })
+  }, [socket])
 
   const onChange = (_, data) => {
     setCurrentAccount(keyring.getPair(data.value))
@@ -99,8 +96,8 @@ function Main(props) {
     props.onTransAmountChange(data.value)
   }
 
-  const [tokenName, setTokenName] = useState('atom')
-  const onChangeTokenName = (_, data) => {console.log('data', data)
+  const [tokenName, setTokenName] = useState('ATOM')
+  const onChangeTokenName = (_, data) => {
     setTokenName(data.value)
     props.onTransTokenChange(data.value)
   }

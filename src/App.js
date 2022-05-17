@@ -34,7 +34,7 @@ function Main() {
 
   const [fromTo, setFromTo] = useState(true) // if the sender is stateSendInit, fromTo is true; visa versa
   const [transAmount, setTransAmount] = useState(0)
-  const [tokenName, setTransTokenName] = useState('atom')
+  const [tokenName, setTransTokenName] = useState('ATOM')
 
   const onTransTokenChange = (_tokenName) => {
     setTransTokenName(_tokenName)

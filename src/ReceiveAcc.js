@@ -28,7 +28,9 @@ export default function Main(props) {
       .catch(console.error)
 
       updateAssets()
-    return () => unsubscribe && unsubscribe()
+
+      const id = setInterval(updateAssets, 3000)
+    return () => clearInterval(id) && unsubscribe && unsubscribe()
   }, [currentAccount, setCurrentAccount, socket])
 
   const onChange = (_, data) => {
@@ -43,11 +45,6 @@ export default function Main(props) {
             return {...item, amount: acc.balance.toString()}
         })).then((_assets) => setAssets(_assets))
     }
-
-    useEffect(() => {
-        const id = setInterval(updateAssets, 3000)
-        return () => clearInterval(id)
-    })
 
   const { addressTo } = formState
 
