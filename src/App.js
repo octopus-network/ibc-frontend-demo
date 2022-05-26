@@ -140,7 +140,7 @@ function Main() {
              />
             <ReceiveAcc
                 state={ judgeFromTo(RECEIVER, fromTo) }
-                senderApi={judgeFromTo(SENDER, fromTo).state.api}
+                senderState={judgeFromTo(SENDER, fromTo)}
                 transAmount={transAmount}
                 tokenName={tokenName}
             />

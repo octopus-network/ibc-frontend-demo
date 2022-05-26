@@ -16,12 +16,12 @@
     "assets": [
       {
         "id": 1,
-        "name": "token1",
+        "name": "wATOM",
         "amount": 0
       },
       {
         "id": 2,
-        "name": "token2",
+        "name": "wOCT",
         "amount": 0
       }
   ]

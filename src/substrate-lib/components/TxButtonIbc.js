@@ -16,10 +16,8 @@ function TxButtonIbc({
   type = 'QUERY',
   txOnClickHandler = null,
 }) {
-  // Hooks
-  const {
-    state: { currentAccount},
-  } = attrs.state
+  // Recipient Account
+  const currentAccount = attrs.senderAccount
 
   const api = attrs.senderApi
 

@@ -47,7 +47,7 @@ function Main(props) {
         .catch(console.error)
 
     updateAssets()
-
+console.log("currentAccount", currentAccount)
     return () => unsubscribe && unsubscribe()
   }, [currentAccount, setCurrentAccount, keyring, initialAddress])
 
@@ -67,8 +67,8 @@ function Main(props) {
   useEffect(() => {
     setCurrentAccount(keyring.getPair(accSelected))
     setSenderAccount(keyring.getPair(accSelected))
-    const id = setInterval(updateAssets, 3000)
-    return () => clearInterval(id)
+    // const id = setInterval(updateAssets, 3000)
+    // return () => clearInterval(id)
   }, [socket])
 
   const onChange = (_, data) => {
@@ -145,7 +145,7 @@ function Main(props) {
         <Form.Field>
           <Input
               fluid
-              label="Native Asset Balance"
+              label="Native Asset(ATOM) Balance"
               type="text"
               placeholder="balance"
               value={accountBalance}

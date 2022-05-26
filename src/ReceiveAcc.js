@@ -12,6 +12,7 @@ export default function Main(props) {
   const [assets, setAssets] = useState([...config.assets])
   const api = props.state.state.api
   const socket = props.state.state.socket
+  const setSenderAccount = props.state.setCurrentAccount
 
   const [status, setStatus] = useState(null)
   const [formState, setFormState] = useState({ addressTo: '' })
@@ -27,6 +28,9 @@ export default function Main(props) {
       .then(unsub => (unsubscribe = unsub))
       .catch(console.error)
 
+      currentAccount &&
+      setSenderAccount(keyring.getPair(currentAccount.address))
+
       updateAssets()
 
       const id = setInterval(updateAssets, 3000)
@@ -35,6 +39,7 @@ export default function Main(props) {
 
   const onChange = (_, data) => {
       setCurrentAccount(keyring.getPair(data.value))
+      setSenderAccount(keyring.getPair(data.value))
       setFormState(prev => ({ ...prev, [data.state]: data.value }))
   }
 
@@ -112,7 +117,7 @@ export default function Main(props) {
             <Form.Field>
                 <Input
                     fluid
-                    label="Native Asset Balance"
+                    label="Native Asset(ATOM) Balance"
                     type="text"
                     placeholder="balance"
                     value={accountBalance}
@@ -135,7 +140,7 @@ export default function Main(props) {
           </Form.Field>
           <Form.Field style={{ textAlign: 'center' }}>
             <TxButtonIbc
-                label="Submit"
+                label="Transfer"
                 type="SIGNED-TX"
                 setStatus={setStatus}
                 attrs={{
@@ -143,13 +148,30 @@ export default function Main(props) {
                   callable: 'transfer',
                   inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr(props.tokenName), props.transAmount,
                       toHexStr(ss58ToHex(addressTo)),
-                      999999, Date.now() + 999999],
+                      999999, "9999999999999999999"],
                   paramFields: [true, true, true, true, true, true, true],
-                  state: props.state,
-                  senderApi: props.senderApi,
+                    senderAccount: props.senderState.state.currentAccount,
+                  senderApi: props.senderState.state.api,
                 }}
             />
           </Form.Field>
+            <Form.Field style={{ textAlign: 'center' }}>
+                <TxButtonIbc
+                    label="Transfer Back"
+                    type="SIGNED-TX"
+                    setStatus={setStatus}
+                    attrs={{
+                        palletRpc: 'ibc',
+                        callable: 'transfer',
+                        inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr("ibc/04C1A8B4EC211C89630916F8424F16DC9611148A5F300C122464CE8E996AABD0"), props.transAmount,
+                            toHexStr(ss58ToHex(props.senderState.state.currentAccount && props.senderState.state.currentAccount.address )),
+                            999999, "9999999999999999999"],
+                        paramFields: [true, true, true, true, true, true, true],
+                        senderAccount: props.state.state.currentAccount,
+                        senderApi: api,
+                    }}
+                />
+            </Form.Field>
           <div style={{ overflowWrap: 'break-word' }}>{status}</div>
         </Form>
       </Grid.Column>
