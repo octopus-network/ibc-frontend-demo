@@ -34,8 +34,11 @@ export default function Main(props) {
       updateAssets()
 
       const id = setInterval(updateAssets, 3000)
-    return () => clearInterval(id) && unsubscribe && unsubscribe()
-  }, [currentAccount, setCurrentAccount, socket])
+    return () => {
+          clearInterval(id)
+        unsubscribe && unsubscribe()
+      }
+  }, [currentAccount, socket])
 
   const onChange = (_, data) => {
       setCurrentAccount(keyring.getPair(data.value))
@@ -167,7 +170,7 @@ export default function Main(props) {
                             toHexStr(ss58ToHex(props.senderState.state.currentAccount && props.senderState.state.currentAccount.address )),
                             999999, "9999999999999999999"],
                         paramFields: [true, true, true, true, true, true, true],
-                        senderAccount: props.state.state.currentAccount,
+                        senderAccount: currentAccount,
                         senderApi: api,
                     }}
                 />

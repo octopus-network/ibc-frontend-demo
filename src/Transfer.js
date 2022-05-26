@@ -43,11 +43,10 @@ function Main(props) {
         .account(acctAddr(currentAccount), balance =>
             setAccountBalance(balance.data.free.toHuman())
         )
-        .then(unsub => (unsubscribe = unsub))
+        .then(unsub => {unsubscribe = unsub; unsub && unsub()})
         .catch(console.error)
 
     updateAssets()
-console.log("currentAccount", currentAccount)
     return () => unsubscribe && unsubscribe()
   }, [currentAccount, setCurrentAccount, keyring, initialAddress])
 
@@ -77,7 +76,6 @@ console.log("currentAccount", currentAccount)
     setFormState(prev => ({ ...prev, [data.state]: data.value }))
     setAccSelected(data.value)
   }
-
 
   const accounts = keyring.getPairs()
 
