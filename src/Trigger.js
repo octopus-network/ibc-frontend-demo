@@ -44,7 +44,7 @@ export default function Main(props) {
   const toHexStr = (myString) => '0x' + new Buffer(myString).toString('hex')
 
   return (
-      <Grid.Column width={99}>
+      <Grid.Column width={16}>
         <Form>
             <Form.Field>
                 <Input
