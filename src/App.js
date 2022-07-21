@@ -160,6 +160,10 @@ function Main() {
             />
           </Grid.Row>
           <Grid.Row>
+          </Grid.Row>
+          <Grid.Row>
+          </Grid.Row>
+          <Grid.Row>
             <Trigger
                 state={ judgeFromTo(RECEIVER, fromTo) }
                 senderState={judgeFromTo(SENDER, fromTo)}

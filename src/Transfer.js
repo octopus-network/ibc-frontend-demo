@@ -89,18 +89,6 @@ function Main(props) {
     })
   })
 
-  const [amount, setAmount] = useState(0)
-  const onChangeAmount = (_, data) => {
-    setAmount(data.value)
-    props.onTransAmountChange(data.value)
-  }
-
-  const [tokenName, setTokenName] = useState('ATOM')
-  const onChangeTokenName = (_, data) => {
-    setTokenName(data.value)
-    props.onTransTokenChange(data.value)
-  }
-
   return (
     <Grid.Column width={8}>
       <h1>Sender</h1>
@@ -150,28 +138,6 @@ function Main(props) {
               placeholder="balance"
               value={accountBalance}
               state="accountBalance"
-          />
-        </Form.Field>
-
-        <Form.Field>
-          <Input
-              fluid
-              label="Token to Send"
-              type="text"
-              state="tokenName"
-              value={tokenName}
-              onChange={onChangeTokenName}
-          />
-        </Form.Field>
-
-        <Form.Field>
-          <Input
-              fluid
-              label="Amount"
-              type="text"
-              state="amount"
-              value={amount}
-              onChange={onChangeAmount}
           />
         </Form.Field>
 

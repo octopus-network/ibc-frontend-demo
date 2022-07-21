@@ -102,7 +102,6 @@ export default function Main(props) {
                 placeholder="address"
                 value={addressTo}
                 state="addressTo"
-                onChange={onChange}
             />
           </Form.Field>
             <Form.Field>

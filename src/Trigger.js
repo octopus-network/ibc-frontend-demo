@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Grid } from 'semantic-ui-react'
+import {Form, Grid, Input} from 'semantic-ui-react'
 import { TxButtonIbc, TxButton } from './substrate-lib/components'
 import { useSubstrateState } from './substrate-lib'
 import { keyring as Keyring } from '@polkadot/ui-keyring'
@@ -9,6 +9,12 @@ export default function Main(props) {
   const [currentAccount] = useState(0)
   const socket = props.state.state.socket
   const [status, setStatus] = useState(null)
+    const [tokenName] = useState('ATOM')
+
+    const [amount, setAmount] = useState(0)
+    const onChangeAmount = (_, data) => {
+        setAmount(data.value)
+    }
 
   useEffect(() => {
 
@@ -38,9 +44,30 @@ export default function Main(props) {
   const toHexStr = (myString) => '0x' + new Buffer(myString).toString('hex')
 
   return (
-      <Grid.Column width={8}>
+      <Grid.Column width={99}>
         <Form>
-          <Form.Field style={{ textAlign: 'center' }}>
+            <Form.Field>
+                <Input
+                    fluid
+                    label="Token to Send"
+                    type="text"
+                    state="tokenName"
+                    value={tokenName}
+                />
+            </Form.Field>
+
+            <Form.Field>
+                <Input
+                    fluid
+                    label="Amount"
+                    type="text"
+                    state="amount"
+                    value={amount}
+                    onChange={onChangeAmount}
+                />
+            </Form.Field>
+
+            <Form.Field style={{ textAlign: 'center' }}>
             <TxButton
                 label="Query Channel"
                 type="QUERY"
@@ -61,7 +88,7 @@ export default function Main(props) {
                 attrs={{
                   palletRpc: 'ibc',
                   callable: 'transfer',
-                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr(props.tokenName), props.transAmount,
+                  inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr(tokenName), amount,
                       toHexStr(ss58ToHex(props.addressTo)),
                       999999, "9999999999999999999"],
                   paramFields: [true, true, true, true, true, true, true],
@@ -78,7 +105,7 @@ export default function Main(props) {
                     attrs={{
                         palletRpc: 'ibc',
                         callable: 'transfer',
-                        inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr("ibc/04C1A8B4EC211C89630916F8424F16DC9611148A5F300C122464CE8E996AABD0"), props.transAmount,
+                        inputParams: [toHexStr('transfer'), toHexStr('channel-0'), toHexStr("ibc/04C1A8B4EC211C89630916F8424F16DC9611148A5F300C122464CE8E996AABD0"), amount,
                             toHexStr(ss58ToHex(props.addressFrom )),
                             999999, "9999999999999999999"],
                         paramFields: [true, true, true, true, true, true, true],
