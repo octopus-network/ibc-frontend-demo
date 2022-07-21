@@ -17,6 +17,7 @@ import Events from './Events'
 import NodeInfo from './NodeInfo'
 import Transfer from './Transfer'
 import ReceiveAcc from './ReceiveAcc'
+import Trigger from './Trigger'
 import config from './config'
 
 /*
@@ -35,9 +36,19 @@ function Main() {
   const [fromTo, setFromTo] = useState(true) // if the sender is stateSendInit, fromTo is true; visa versa
   const [transAmount, setTransAmount] = useState(0)
   const [tokenName, setTransTokenName] = useState('ATOM')
+  const [addressFrom, setAddressFrom] = useState('')
+  const [addressTo, setAddressTo] = useState('')
 
   const onTransTokenChange = (_tokenName) => {
     setTransTokenName(_tokenName)
+  }
+
+  const onAddressFromChange = (_address) => {
+    setAddressFrom(_address)
+  }
+
+  const onAddressToChange = (_address) => {
+    setAddressTo(_address)
   }
 
   const loader = text => (
@@ -134,15 +145,28 @@ function Main() {
           <Grid.Row>
             <Transfer
                 state={ judgeFromTo(SENDER, fromTo) }
-                setSenderAccount={ judgeFromTo(RECEIVER, fromTo).setCurrentAccount }
+                setSenderAccount={ judgeFromTo(SENDER, fromTo).setCurrentAccount }
                 onTransAmountChange={ onTransAmountChange }
                 onTransTokenChange={ onTransTokenChange }
-             />
+                onAddressFromChange={onAddressFromChange}
+            />
             <ReceiveAcc
+                state={ judgeFromTo(RECEIVER, fromTo) }
+                setReceiverAccount={ judgeFromTo(RECEIVER, fromTo).setCurrentAccount }
+                senderState={judgeFromTo(SENDER, fromTo)}
+                transAmount={transAmount}
+                tokenName={tokenName}
+                onAddressToChange={onAddressToChange}
+            />
+          </Grid.Row>
+          <Grid.Row>
+            <Trigger
                 state={ judgeFromTo(RECEIVER, fromTo) }
                 senderState={judgeFromTo(SENDER, fromTo)}
                 transAmount={transAmount}
                 tokenName={tokenName}
+                addressTo={addressTo}
+                addressFrom={addressFrom}
             />
           </Grid.Row>
           <Grid.Row>

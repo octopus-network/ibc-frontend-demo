@@ -75,6 +75,7 @@ function Main(props) {
     setSenderAccount(keyring.getPair(data.value))
     setFormState(prev => ({ ...prev, [data.state]: data.value }))
     setAccSelected(data.value)
+    props.onAddressFromChange(data.value)
   }
 
   const accounts = keyring.getPairs()
@@ -106,6 +107,7 @@ function Main(props) {
       <Form>
         <Form.Field>
           {assets.map((item,index)=>{
+            if(item.name === 'wOCT')
               return <Input
                   fluid
                   label={item.name}
