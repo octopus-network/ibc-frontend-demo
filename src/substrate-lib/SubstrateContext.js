@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { keyring as Keyring } from '@polkadot/ui-keyring'
+import { web3Accounts, web3Enable } from '@polkadot/extension-dapp'
 
 import config from '../config'
 
@@ -90,9 +91,17 @@ const connect = (state, dispatch) => {
 const loadAccounts = (dispatch, dispatchRecv) => {
   dispatch({ type: 'LOAD_KEYRING' })
 
-  const asyncLoadAccounts = () => {
+  const asyncLoadAccounts = async () => {
     try {
-      Keyring.loadAll({ isDevelopment: true })
+      await web3Enable(config.APP_NAME)
+      let allAccounts = await web3Accounts()
+
+      allAccounts = allAccounts.map(({ address, meta }) => ({
+        address,
+        meta: { ...meta, name: `${meta.name} (${meta.source})` },
+      }))
+
+      Keyring.loadAll({ isDevelopment: true }, allAccounts)
       dispatch({ type: 'SET_KEYRING', payload: Keyring })
       dispatchRecv({ type: 'SET_KEYRING', payload: Keyring })
     } catch (e) {
